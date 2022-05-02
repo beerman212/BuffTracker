@@ -1,4 +1,5 @@
 enfeebling_modifiers = {
+    -- Default augment assumes max
     [11108] = {saboteur=0.10}, -- Estoqueur's Gantherots +2
     [11208] = {saboteur=0.05}, -- Estoqueur's Gantherots +1
     [25441] = {augment=0.15}, -- Duelist's Torque
@@ -19,8 +20,9 @@ enfeebling_resist_states = {
     [3] = 0.125,
 }
 
--- Default augment assumes max
+
 enhancing_modifiers = {
+    -- Default augment assumes max
     [11123] = {perpetuance=0.50}, -- Savant's Bracers +2
     [11223] = {perpetuance=0.25}, -- Savant's Bracers +1
     [11148] = {0.2}, -- Estoqueur's Houseaux +2
