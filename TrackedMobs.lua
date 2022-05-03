@@ -84,11 +84,22 @@ end
 TrackedBuff = {}
 TrackedBuff.example = {id=2, spellName = "Sleep II", timeApplied=0.0, expected_durations={[0]=80,[1]=40,[2]=20,[3]=10}}
 
-function TrackedBuff.new(buff_info)
-    local self = buff_info or {id = -1}
+function TrackedBuff.new(buff_id, spell, time_applied, expected_durations)
+    local self = {}
+    self.id = buff_id or -1
+    self.spell = spell or {}
+    self.time_applied = time_applied or os.clock()
+    self.expected_durations = expected_durations or {[0] = 0, [1] = 0, [2] = 0, [3] = 0}
     
     setmetatable(self, {__index = TrackedBuff})
+
+    self:calculate_expected_expiration()
+
     return self
+end
+
+function TrackedBuff:get_spell_name()
+    return self.spell.en or "Unknown"
 end
 
 function TrackedBuff:get_current_duration()
@@ -96,21 +107,33 @@ function TrackedBuff:get_current_duration()
 end
 
 function TrackedBuff:calculate_expected_expiration()
-    self.expected_expirations = expected_durations:map(
+    self.expected_expirations = self.expected_durations:map(
         function(expected_duration)
             return timeApplied + expected_duration
         end
     )
 end
 
-function TrackedBuff:get_expected_expiration(resist_state_value)
+function TrackedBuff:get_time_to_expire(resist_state_value)
     if not self.expected_expirations then
         self:calculate_expected_expiration()
     end
 
     if resist_state_value then
-        return self.expected_expirations[resist_state_value]
+        return self.expected_expirations[resist_state_value] - os.clock()
     else
-        return self.expected_expirations
+        local current_time = os.clock()
+        return self.expected_expirations:map(function(expiration) return expiration - current_time end)
     end
+end
+
+function TrackedBuff:get_spell_name()
+    return self.spell.en or "Unknown"
+end
+
+function TrackedBuff:overwrite(spell, time_applied, expected_durations)
+    self.spell = spell or {en = "Unknown"}
+    self.time_applied = time_applied or os.clock()
+    self.expected_durations = expected_durations or {[0] = 0, [1] = 0, [2] = 0, [3] = 0}
+    self:calculate_expected_expiration()
 end

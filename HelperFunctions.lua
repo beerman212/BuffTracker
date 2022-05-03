@@ -56,9 +56,10 @@ function calculate_enhancing_duration(spell, equipment)
     return enhancing_duration
 end
 
-function calculate_enfeebling_duration(spell, equipment)
-    local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
-
+function calculate_enfeebling_duration(player, spell, target, equipment)
+    if not (player or spell or target or equipment) then return end
+    local buffs = get_player_buffs(player)
+    
     local composure_modifier = 1
     local composure_count = 0
 
@@ -67,7 +68,7 @@ function calculate_enfeebling_duration(spell, equipment)
     local duration_modifier = 1
     local augment_duration_modifier = 1
 
-    local base_duration = (spell_info.duration or 0)
+    local base_duration = (spell.duration or 0)
 
     local duration_bonus = (player.main_job == "RDM" and player.merits.enfeebling_magic_duration and (player.merits.enfeebling_magic_duration * 6) or 0)
         + (player.job_points[player.main_job].enfeebling_magic_duration or 0)
