@@ -63,7 +63,7 @@ function calculate_enfeebling_duration(player, spell, target, equipment)
     local composure_modifier = 1
     local composure_count = 0
 
-    local saboteur_modifier = get_base_saboteur_modifier(spell, buffs, mob_data.NMs or L{})
+    local saboteur_modifier = get_base_saboteur_modifier(spell, target, buffs, mob_data.NMs or L{})
 
     local duration_modifier = 1
     local augment_duration_modifier = 1
@@ -71,11 +71,15 @@ function calculate_enfeebling_duration(player, spell, target, equipment)
     local base_duration = (spell.duration or 0)
 
     local duration_bonus = (player.main_job == "RDM" and player.merits.enfeebling_magic_duration and (player.merits.enfeebling_magic_duration * 6) or 0)
-        + (player.job_points[player.main_job].enfeebling_magic_duration or 0)
-        + (buffs.stymie and (player.job_points[player.main_job].stymie_effect or 0))
+    duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].enfeebling_magic_duration or 0)
+
+    if buffs.Stymie then
+        duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].stymie_effect or 0)
+    end
+
 
     for _, slot in ipairs(equip_slots) do
-        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot]).id
+        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         local modifiers = enfeebling_modifiers[item.id]
 
         if modifiers then
@@ -94,18 +98,23 @@ function calculate_enfeebling_duration(player, spell, target, equipment)
             duration_bonus = duration_bonus + (player.merits.enfeebling_magic_duration and (player.merits.enfeebling_magic_duration * 6) or 0)
         end
 
-        if composure_gear[item.id] then
+        if composure_gear:contains(item.id) then
             composure_count = composure_count + 1
         end
     end
+    
+    composure_modifier = composure_modifier + (composure_modifiers[composure_count] or 0)
+    local duration = (base_duration * saboteur_modifier) + duration_bonus
 
-    local duration = math.floor(base_duration * saboteur_modifier) + duration_bonus
+    for _, modifier in ipairs({duration_modifier, augment_duration_modifier, composure_modifier}) do
+        duration = duration * modifier
 
-    for modifier in pairs({duration_modifier, augment_duration_modifier, composure_modifier}) do
-        duration = math.floor(duration * modifier)
+        windower.add_to_chat(123, "Duration: " .. duration .. ", Modifier: " .. modifier)
     end
 
-    local duration_map = enfeebling_resist_states:map(
+    duration = math.floor(duration)
+
+    local duration_map = table.map(enfeebling_resist_states,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
         end
@@ -123,11 +132,11 @@ function get_basic_info(spell, equipment)
     return spell_info, equipment, player, buffs
 end
 
-function get_base_saboteur_modifier(spell, buffs, nm_table)
+function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     local saboteur_modifier = 1
 
     if buffs.Saboteur then
-        if nm_table:contains(spell.target.name) then
+        if nm_table:contains(target:get_name()) then
             saboteur_modifier = 1.25
         else
             saboteur_modifier = 2

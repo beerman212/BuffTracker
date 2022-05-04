@@ -8,7 +8,7 @@ function action_handler(action)
     if category == 'spell_finish' then
         local actor_id = actionpacket:get_id()
         local spell = actionpacket:get_spell()
-        local targets = actionpacket:get_targets()
+
         local skill_name = res.skills[spell.skill].en
         local time_cast = os.clock()
 
@@ -22,7 +22,7 @@ function action_handler(action)
             if actor_id == player.id then
                 local equipment = windower.ffxi.get_items('equipment')
 
-                for target in pairs(targets) do
+                for target in actionpacket:get_targets() do
                     local action = target:get_actions()()
                     local message_id = action:get_message_id()
 
@@ -39,10 +39,11 @@ function action_handler(action)
                         else
                             local debuff_durations = calculate_enfeebling_duration(player, spell, target, equipment)
 
+                            table.vprint(debuff_durations)
                             if not debuff_durations then return end
 
                             -- TODO: Update Tracked Mob Table
-                            local tracked_buff = TrackedBuff.new({id = target.top_level_param, spell_name = spell.en, time_applied = time_cast, expected_durations = debuff_durations})
+                            --local tracked_buff = TrackedBuff.new({id = target.top_level_param, spell_name = spell.en, time_applied = time_cast, expected_durations = debuff_durations})
                             
                         end
                     end

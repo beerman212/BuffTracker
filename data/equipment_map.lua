@@ -69,10 +69,10 @@ enhancing_modifiers = {
 }
 
 composure_modifiers = {
-    [2] = {0.1},
-    [3] = {0.2},
-    [4] = {0.35},
-    [5] = {0.5}
+    [2] = 0.1,
+    [3] = 0.2,
+    [4] = 0.35,
+    [5] = 0.5
 }
 
 composure_gear = S{
