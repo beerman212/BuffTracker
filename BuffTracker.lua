@@ -20,7 +20,13 @@ require('message_map')
 require('EventHandler')
 require('TrackedMobs')
 require('HelperFunctions')
-require('data/mob_data')
+mob_data = require('data/mob_data')
 require('data/equipment_map')
 
 ActionPacket.open_listener(action_handler)
+
+tracked_mobs = TrackedMobs.new()
+
+function apply_buff()
+
+end

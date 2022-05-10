@@ -1,5 +1,3 @@
-mob_data = {}
+immunities = T{}
 
-mob_data.immunities = {}
-
-mob_data.NMs = L{}
+NMs = L{}

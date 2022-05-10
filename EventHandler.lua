@@ -4,6 +4,7 @@ function action_handler(action)
     local actionpacket = ActionPacket.new(action)
     local category = actionpacket:get_category_string()
     local player = windower.ffxi.get_player()
+    local buffs = get_player_buffs(player)
 
     if category == 'spell_finish' then
         local actor_id = actionpacket:get_id()
@@ -27,7 +28,16 @@ function action_handler(action)
                     local message_id = action:get_message_id()
 
                     if immunity_message_ids:contains(message_id) then
-                        -- TODO: Update mob immunities
+                        local target_name = target:get_name()
+                        if mob_data.immunities:contains(target_name) then
+                            if not (mob_data.immunities[target_name]:contains(action.top_level_param)) then
+                                mob_data.immunities[target_name]:append(action.top_level_param)
+                            end
+                        else
+                            mob_data.immunities:append({[target_name] = L{action.top_level_param}})
+                        end
+
+                        -- TODO: Update mob_data file
                     elseif no_effect_message_ids:contains(message_id) then
                         -- TODO: possibly notify player debuff not applied
                     elseif resist_message_ids:contains(message_id) then
@@ -37,11 +47,12 @@ function action_handler(action)
                         if damage_message_ids:contains(message_id) then
                             -- TODO: Handle Dia, Bio, Etc.
                         else
-                            local debuff_durations = calculate_enfeebling_duration(player, spell, target, equipment)
+                            local debuff_durations = calculate_enfeebling_duration(player, spell, target, equipment, buffs)
 
-                            table.vprint(debuff_durations)
                             if not debuff_durations then return end
 
+                            local tracked_buff = TrackedBuff.new(target.top_level_param, spell, player, time_cast, debuff_durations, equipment, buffs.Saboteur or false)
+                            table.vprint(tracked_buff)
                             -- TODO: Update Tracked Mob Table
                             --local tracked_buff = TrackedBuff.new({id = target.top_level_param, spell_name = spell.en, time_applied = time_cast, expected_durations = debuff_durations})
                             
@@ -56,5 +67,16 @@ function action_handler(action)
 end
 
 windower.register_event('action message', function(id, data)
+    if id == 0x029 then
+        local action_message = {}
+        action_message.id = data:unpack('H', 0x19) % 32768
+        action_message.target_id = data:unpack('I', 0x09)
+        action_message.param = data:unpack('I', 0x0D)
 
+        if mob_death_message_ids:contains(action_message.id) then
+            -- TODO: Process tracked mob disposal
+        elseif wears_off_message_ids:contains(action_message.id) then
+            -- TODO: Process expired debuff
+        end
+    end
 end)
