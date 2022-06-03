@@ -25,6 +25,7 @@ function action_handler(action)
 
                     else
                         local buff_duration = calculate_enhancing_duration(player, spell, target, equipment, buffs)
+                        windower.add_to_chat(123, convert_seconds_to_timer(buff_duration))
                     end
                 end
             else

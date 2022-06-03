@@ -4,10 +4,10 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
     if not (player or spell or target or equipment or buffs) then return end
 
-    local composure_modifier = get_base_enhancing_composure_modifier(spell, player, buffs)
+    local composure_modifier = get_base_enhancing_composure_modifier(player, spell, target, buffs)
     local composure_count = 0
 
-    local base_duration = spell_info.duration or 0
+    local base_duration = spell.duration or 0
     local duration_modifier = 1
     local duration_bonus = get_enhancing_duration_bonus(spell, player, buffs)
 
@@ -50,10 +50,16 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
 
     local enhancing_duration = base_duration + duration_bonus
 
-    for modifier in pairs({duration_modifier, augment_duration_modifier, composure_modifier, perpetuance_modifier, embolden_modifier}) do
+    for _, modifier in ipairs({duration_modifier, augment_duration_modifier, composure_modifier, perpetuance_modifier, embolden_modifier}) do
         enhancing_duration = math.floor(enhancing_duration * modifier)
+        windower.add_to_chat(123, "modifier: %d, duration: %i":format(modifier, enhancing_duration))
     end
 
+    if enhancing_duration > base_duration * 10 then
+        enhancing_duration = base_duration * 10
+    end
+
+    windower.add_to_chat(123, "Spell: %s, Duration: %s":format(spell.english, convert_seconds_to_timer(enhancing_duration)))
     return enhancing_duration
 end
 
@@ -173,7 +179,7 @@ function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     return saboteur_modifier
 end
 
-function get_base_enhancing_composure_modifier(spell, player, buffs)
+function get_base_enhancing_composure_modifier(player, spell, target, buffs)
     local composure_modifier = 1
 
     if buffs.Composure and target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell")) then
@@ -191,7 +197,7 @@ function get_enhancing_duration_bonus(spell, player, buffs)
             duration_bonus = duration_bonus + (player.merits.enhancing_magic_duration * 6)
         end
 
-        duration_bonus = duration_bonus + (player.job_points[player.main_job].enhancing_magic_duration or 0)
+        duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].enhancing_magic_duration or 0)
     elseif player.main_job == "SCH" then
         if spell.english:startswith("Regen") and (buffs["Light Arts"] or buffs["Addendum: White"]) then
             local regen_bonus = math.floor((player.main_job_level - 1) / 4) * 2
