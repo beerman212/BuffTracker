@@ -1,7 +1,8 @@
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
-function calculate_enhancing_duration(spell, equipment)
-    local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
+function calculate_enhancing_duration(player, spell, target, equipment, buffs)
+    --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
+    if not (player or spell or target or equipment or buffs) then return end
 
     local composure_modifier = get_base_enhancing_composure_modifier(spell, player, buffs)
     local composure_count = 0
@@ -12,7 +13,7 @@ function calculate_enhancing_duration(spell, equipment)
 
     local augment_duration_modifier = 1
     local perpetuance_modifier = buffs.Perpetuance and 2 or 1
-    local embolden_modifier = buffs.Embolden and (spell.target.id == player.id and -0.5) or 1
+    local embolden_modifier = buffs.Embolden and (target.id == player.id and -0.5) or 1
 
     for _, slot in ipairs(equip_slots) do
         local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
@@ -43,7 +44,7 @@ function calculate_enhancing_duration(spell, equipment)
         end
     end
 
-    if buffs.Composure and spell.target.id ~= player.id then
+    if buffs.Composure and target.id ~= player.id then
         composure_modifier = composure_modifier + composure_modifiers[composure_count] or 0
     end
 
@@ -119,31 +120,32 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
     )
 
     -- this doesn't go here, probably need to make it's own functions:
-    local cast_data = {
-        caster = player,
-        equipment = equipment,
-        spell = spell,
-        target = target,
-        buffs = buffs,
-        base_duration = base_duration,
-        saboteur_modifier = saboteur_modifier,
-        duration_bonus = duration_bonus,
-        duration_modifier = duration_modifier,
-        augment_duration_modifier = augment_duration_modifier,
-        composure_modifier = composure_modifier,
-        duration_map = duration_map
-    }
+    -- local cast_data = {
+    --     caster = player,
+    --     equipment = equipment,
+    --     spell = spell,
+    --     target = target,
+    --     buffs = buffs,
+    --     time_applied = current_time,
+    --     base_duration = base_duration,
+    --     saboteur_modifier = saboteur_modifier,
+    --     duration_bonus = duration_bonus,
+    --     duration_modifier = duration_modifier,
+    --     augment_duration_modifier = augment_duration_modifier,
+    --     composure_modifier = composure_modifier,
+    --     duration_map = duration_map
+    -- }
 
-    local cast_info = string.format("Spell: %s, Base Duration: %d, Sabo Mod: %.2d, Duration Bonus: %d", spell.en, base_duration, saboteur_modifier, duration_bonus)
-    cast_info = cast_info .. "\n"
-    cast_info = cast_info .. string.format("Duration Mod: %.2d, Augment Mod: %.2d, Composure Mod: %.2d", duration_modifier, augment_duration_modifier, composure_modifier)
-    cast_info = cast_info .. "\nExpected Durations: "
-    for _, duration in pairs(duration_map) do
-        cast_info = cast_info .. string.format("\n\tResist: %s, Duration: %4d, Expires At: %s",state == 0 and " No Resist" or string.format("1/%d Resist", pow(2, state)), duration, os.date("%X", current_time + duration))
-    end
-    cast_info = cast_info .. string.format("\nMax Duration Expires At: %s", os.date("%X", os.time() + duration_map[0]))
+    -- local cast_info = string.format("Spell: %s, Base Duration: %d, Sabo Mod: %.2d, Duration Bonus: %d", spell.en, base_duration, saboteur_modifier, duration_bonus)
+    -- cast_info = cast_info .. "\n"
+    -- cast_info = cast_info .. string.format("Duration Mod: %.2d, Augment Mod: %.2d, Composure Mod: %.2d", duration_modifier, augment_duration_modifier, composure_modifier)
+    -- cast_info = cast_info .. "\nExpected Durations: "
+    -- for state, duration in pairs(duration_map) do
+    --     cast_info = cast_info .. string.format("\n\tResist: %s, Duration: %4d, Expires At: %s",state == 0 and " No Resist" or string.format("1/%d Resist", pow(2, state)), duration, os.date("%X", current_time + duration))
+    -- end
+    -- cast_info = cast_info .. string.format("\nMax Duration Expires At: %s", get_time_stamp(current_time + duration_map[0]))
 
-    windower.add_to_chat(123, cast_info)
+    -- windower.add_to_chat(123, cast_info)
 
     return duration_map
 end
@@ -174,7 +176,7 @@ end
 function get_base_enhancing_composure_modifier(spell, player, buffs)
     local composure_modifier = 1
 
-    if buffs.Composure and spell.target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell")) then
+    if buffs.Composure and target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell")) then
         composure_modifier = 3
     end
 
@@ -243,4 +245,20 @@ function convert_seconds_to_timer(duration)
     local seconds = duration % 60
 
     return string.format("%2d:%2d", minutes, seconds)
+end
+
+function get_time_utc(time)
+    if not time then
+        return os.date("'!%Y-%m-%dT%H:%M:%SZ'")
+    else
+        return os.date("'!%Y-%m-%dT%H:%M:%SZ'", time)
+    end
+end
+
+function get_time_stamp(time)
+    if not time then
+        return os.date("%X")
+    else
+        return os.date("%X", time)
+    end
 end

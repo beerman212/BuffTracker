@@ -15,7 +15,18 @@ function action_handler(action)
 
         if skill_name == "Enhancing Magic" then
             if actor_id == player.id then
-                
+                local equipment = windower.ffxi.get_items('equipment')
+
+                for target in actionpacket:get_targets() do
+                    local action = target:get_actions()()
+                    local message_id = action:get_message_id()
+
+                    if no_effect_message_ids:contains(message_id) then
+
+                    else
+                        local buff_duration = calculate_enhancing_duration(player, spell, target, equipment, buffs)
+                    end
+                end
             else
 
             end
