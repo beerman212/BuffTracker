@@ -55,8 +55,8 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
         windower.add_to_chat(123, "modifier: %d, duration: %i":format(modifier, enhancing_duration))
     end
 
-    if enhancing_duration > base_duration * 10 then
-        enhancing_duration = base_duration * 10
+    if (not (spell.english:startswith("Protect") or spell.english:startswith("Shell") or spell.english == "Aquaveil")) and enhancing_duration > 60 * 30 then
+        enhancing_duration = 60 * 30
     end
 
     windower.add_to_chat(123, "Spell: %s, Duration: %s":format(spell.english, convert_seconds_to_timer(enhancing_duration)))
@@ -182,7 +182,7 @@ end
 function get_base_enhancing_composure_modifier(player, spell, target, buffs)
     local composure_modifier = 1
 
-    if buffs.Composure and target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell")) then
+    if buffs.Composure and target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell") or spell.english == "Aquaveil") then
         composure_modifier = 3
     end
 
