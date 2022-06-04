@@ -51,15 +51,13 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     local enhancing_duration = base_duration + duration_bonus
 
     for _, modifier in ipairs({duration_modifier, augment_duration_modifier, composure_modifier, perpetuance_modifier, embolden_modifier}) do
-        enhancing_duration = math.floor(enhancing_duration * modifier)
-        windower.add_to_chat(123, "modifier: %d, duration: %i":format(modifier, enhancing_duration))
+        enhancing_duration = enhancing_duration * modifier
     end
 
     if (not (spell.english:startswith("Protect") or spell.english:startswith("Shell") or spell.english == "Aquaveil")) and enhancing_duration > 60 * 30 then
         enhancing_duration = 60 * 30
     end
 
-    windower.add_to_chat(123, "Spell: %s, Duration: %s":format(spell.english, convert_seconds_to_timer(enhancing_duration)))
     return enhancing_duration
 end
 
@@ -247,10 +245,14 @@ function get_player_buffs(player)
 end
 
 function convert_seconds_to_timer(duration)
-    local minutes = math.floor(duration / 60)
-    local seconds = duration % 60
+    local hours, minutes, seconds
 
-    return string.format("%2d:%2d", minutes, seconds)
+    hours = math.floor(duration / 3600)
+    minutes = math.floor(duration % 3600 / 60)
+    seconds = math.floor(duration % 60)
+
+    return string.format("%02d:%02d:%02d", hours, minutes, seconds)
+
 end
 
 function get_time_utc(time)

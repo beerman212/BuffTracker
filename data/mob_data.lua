@@ -1,3 +1,4 @@
-immunities = T{}
-
-NMs = L{}
+return{
+    immunities = T{},
+    NMs = L{}
+}

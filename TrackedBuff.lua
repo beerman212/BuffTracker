@@ -21,7 +21,7 @@ function TrackedBuff.tostring(buff)
     if buff.time_expired then
         buff_string = string.format("Buff ID: %d, Spell: %s, Caster: %s, Duration: %d, Resist State: %s", buff:get_buff_id(), buff:get_spell_name(), buff:get_caster_name(), buff:get_final_duration(), buff:get_resist_state())
     else
-        buff_string = string.format("Buff ID: %d, Spell: %s, Caster: %s, Current Duration: %d, Maximum Expected Duration: %d", buff:get_buff_id(), buff:get_spell_name(), buff:get_caster_name(), buff:get_current_duration(), buff.calculated_durations[0])
+        buff_string = string.format("Buff ID: %d, Spell: %s, Caster: %s, Current Duration: %s, Maximum Expected Duration: %s, Expected Time Expire: %s", buff:get_buff_id(), buff:get_spell_name(), buff:get_caster_name(), convert_seconds_to_timer(buff:get_current_duration()), convert_seconds_to_timer(buff.calculated_durations[0]), os.date("%X", buff.time_applied + buff.calculated_durations[0]))
     end
 
     return buff_string
@@ -53,6 +53,12 @@ function TrackedBuff:get_current_duration()
     return os.difftime(current_time, self.time_applied)
 end
 
+function TrackedBuff:get_current_duration_as_timer()
+    local current_duration = self:get_current_duration()
+
+    return convert_seconds_to_timer(current_duration)
+end
+
 function TrackedBuff:expire()
     self.time_expired = os.time()
 end
@@ -61,6 +67,13 @@ function TrackedBuff:get_final_duration()
     if not self.time_expired then return end
 
     return os.difftime(self.time_expired, self.time_applied)
+end
+
+function TrackedBuff:get_final_duration_as_timer()
+    if not self.time_expired then return end
+
+    local final_duration = self:get_final_duration()
+    return convert_seconds_to_timer(final_duration)
 end
 
 function TrackedBuff:get_resist_state()

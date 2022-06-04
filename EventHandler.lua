@@ -11,7 +11,7 @@ function action_handler(action)
         local spell = actionpacket:get_spell()
 
         local skill_name = res.skills[spell.skill].en
-        local time_cast = os.clock()
+        local time_cast = os.time()
 
         if skill_name == "Enhancing Magic" then
             if actor_id == player.id then
@@ -63,11 +63,10 @@ function action_handler(action)
 
                             if not debuff_durations then return end
 
-                            local tracked_buff = TrackedBuff.new(target.top_level_param, spell, player, time_cast, debuff_durations, equipment, buffs.Saboteur or false)
-                            table.vprint(tracked_buff)
+                            local tracked_buff = TrackedBuff.new(target.top_level_param, spell, player, equipment, time_cast, debuff_durations, buffs.Saboteur or false)
+
+                            --windower.add_to_chat(123, TrackedBuff.tostring(tracked_buff))
                             -- TODO: Update Tracked Mob Table
-                            --local tracked_buff = TrackedBuff.new({id = target.top_level_param, spell_name = spell.en, time_applied = time_cast, expected_durations = debuff_durations})
-                            
                         end
                     end
                 end
