@@ -24,8 +24,11 @@ function action_handler(action)
                     if no_effect_message_ids:contains(message_id) then
 
                     else
-                        local buff_duration = calculate_enhancing_duration(player, spell, target, equipment, buffs)
-                        windower.add_to_chat(123, convert_seconds_to_timer(buff_duration))
+                        local buff = res.buffs[action.param]
+                        local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                        tracked_buff:calculate_buff_duration()
+
+                        tracked_buff:print_log(true)
                     end
                 end
             else
@@ -59,14 +62,11 @@ function action_handler(action)
                         if damage_message_ids:contains(message_id) then
                             -- TODO: Handle Dia, Bio, Etc.
                         else
-                            local debuff_durations = calculate_enfeebling_duration(player, spell, target, equipment, buffs)
+                            local buff = res.buffs[action.param]
+                            local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                            tracked_buff:calculate_buff_duration()
 
-                            if not debuff_durations then return end
-
-                            local tracked_buff = TrackedBuff.new(target.top_level_param, spell, player, equipment, time_cast, debuff_durations, buffs.Saboteur or false)
-
-                            --windower.add_to_chat(123, TrackedBuff.tostring(tracked_buff))
-                            -- TODO: Update Tracked Mob Table
+                            tracked_buff:print_log(true)
                         end
                     end
                 end

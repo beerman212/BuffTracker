@@ -58,7 +58,16 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
         enhancing_duration = 60 * 30
     end
 
-    return enhancing_duration
+    local modifiers = {
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier,
+        ["Composure"] = composure_modifier,
+        ["Perpetuance"] = perpetuance_modifier,
+        ["Embolden"] = embolden_modifier
+    }
+
+    return enhancing_duration, modifiers
 end
 
 function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
@@ -123,35 +132,15 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
         end
     )
 
-    -- this doesn't go here, probably need to make it's own functions:
-    -- local cast_data = {
-    --     caster = player,
-    --     equipment = equipment,
-    --     spell = spell,
-    --     target = target,
-    --     buffs = buffs,
-    --     time_applied = current_time,
-    --     base_duration = base_duration,
-    --     saboteur_modifier = saboteur_modifier,
-    --     duration_bonus = duration_bonus,
-    --     duration_modifier = duration_modifier,
-    --     augment_duration_modifier = augment_duration_modifier,
-    --     composure_modifier = composure_modifier,
-    --     duration_map = duration_map
-    -- }
+    local modifiers = {
+        ["Saboteur"] = saboteur_modifier,
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier,
+        ["Composure"] = composure_modifier
+    }
 
-    -- local cast_info = string.format("Spell: %s, Base Duration: %d, Sabo Mod: %.2d, Duration Bonus: %d", spell.en, base_duration, saboteur_modifier, duration_bonus)
-    -- cast_info = cast_info .. "\n"
-    -- cast_info = cast_info .. string.format("Duration Mod: %.2d, Augment Mod: %.2d, Composure Mod: %.2d", duration_modifier, augment_duration_modifier, composure_modifier)
-    -- cast_info = cast_info .. "\nExpected Durations: "
-    -- for state, duration in pairs(duration_map) do
-    --     cast_info = cast_info .. string.format("\n\tResist: %s, Duration: %4d, Expires At: %s",state == 0 and " No Resist" or string.format("1/%d Resist", pow(2, state)), duration, os.date("%X", current_time + duration))
-    -- end
-    -- cast_info = cast_info .. string.format("\nMax Duration Expires At: %s", get_time_stamp(current_time + duration_map[0]))
-
-    -- windower.add_to_chat(123, cast_info)
-
-    return duration_map
+    return duration_map, modifiers
 end
 
 function get_basic_info(spell, equipment)
