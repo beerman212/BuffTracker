@@ -1,3 +1,5 @@
+require('logger')
+
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
@@ -155,11 +157,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local duration_modifier = 1
     local augment_duration_modifier = 1
     local troubadour_modifier = 1
-
-    if buffs.Troubadour and target.id == player.id then
-        troubadour_modifier = 2
-    end
-
+    local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
 
     for _, slot in ipairs(equip_slots) do
@@ -177,15 +175,36 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         end
     end
 
+    if buffs.Troubadour then
+        troubadour_modifier = 2
+    end
+
     -- Job point bonus conditions:
     -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
-    duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
-    duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
-    duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
-    duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
+    if buffs.Clarion_Call then
+        duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
+    end
+    if buffs.Tenuto then
+        duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
+    end
+    if spell.english:endswith("Lullaby") then
+        duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
+    end
+
+    -- Soul Voice doubles the duration of Hymnus, Mazurka, and Scherzo, but is not compatible with Marcato.
+    if spell.english:endswith("Hymnus") or spell.english:endswith("Mazurka") or spell.english:endswith("Scherzo") then
+        if buffs.Soul_Voice then
+            soul_voice_modifier = 2
+        elseif buffs.Marcato then
+            soul_voice_modifier = 1.5
+        end
+        if buffs.Marcato then
+            duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
+        end
+    end
     
-    -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus.
-    local duration = (base_duration * duration_modifier + duration_bonus) * troubadour_modifier
+    -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus. Soul voice, where applicable is multiplicative with this term.
+    local duration = (base_duration * duration_modifier + duration_bonus) * troubadour_modifier * soul_voice_modifier
 
     duration = math.floor(duration)
 
@@ -198,6 +217,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     local modifiers = {
         ["Troubadour"] = troubadour_modifier,
+        ["Soul Voice"] = soul_voice_modifier,
         ["Flat Bonus"] = duration_bonus,
         ["Duration"] = duration_modifier,
         ["Augment"] = augment_duration_modifier,
@@ -205,6 +225,54 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     return duration, modifiers
 end
+
+-- Job Specific Calculations
+
+-- Warrior
+-- Tomahawk Duration (merits)
+-- Lots of stuff from equipment
+
+-- Monk
+
+-- White Mage
+
+-- Black Mage
+
+-- Red Mage
+
+-- Thief
+
+-- Paladin
+
+-- Dark Knight
+
+-- Beastmaster
+
+-- Bard
+
+-- Ranger
+
+-- Samurai
+
+-- Ninja
+
+-- Dragoon
+
+-- Summoner
+
+-- Blue Mage
+
+-- Corsair
+
+-- Puppetmaster
+
+-- Dancer
+
+-- Scholar
+
+-- Geomancer
+
+-- Rune Fencer
 
 function get_basic_info(spell, equipment)
     local spell_info = windower.res.spells[spell.recast_id]
