@@ -151,6 +151,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     
     -- Troubadour is applied after all other modifiers
 
+    local duration_bonus = 0
     local duration_modifier = 1
     local augment_duration_modifier = 1
     local troubadour_modifier = 1
@@ -175,6 +176,13 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
             end
         end
     end
+
+    -- Job point bonus conditions:
+    -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
+    duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
+    duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
+    duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
+    duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
     
     -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus.
     local duration = (base_duration * duration_modifier + duration_bonus) * troubadour_modifier
@@ -195,7 +203,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         ["Augment"] = augment_duration_modifier,
     }
 
-    return duration_map, modifiers
+    return duration, modifiers
 end
 
 function get_basic_info(spell, equipment)

@@ -202,7 +202,7 @@ function TrackedBuff:calculate_buff_duration()
                 end
             
             elseif skill == "Singing" then
-                local duration, modifiers = calculate_enhancing_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+                local duration, modifiers = calculate_song_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
                 if duration then
                     self.calculated_duration = duration
