@@ -143,6 +143,61 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
     return duration_map, modifiers
 end
 
+-- Song Calculations
+-- Reference page: https://www.bg-wiki.com/ffxi/Category:Song#Song_Effect_Duration
+function calculate_song_duration(player, spell, target, equipment, buffs)
+    if not (player or spell or target or equipment or buffs) then return end
+    local current_time = os.time()
+    
+    -- Troubadour is applied after all other modifiers
+
+    local duration_modifier = 1
+    local augment_duration_modifier = 1
+    local troubadour_modifier = 1
+
+    if buffs.Troubadour and target.id == player.id then
+        troubadour_modifier = 2
+    end
+
+    local base_duration = (spell.duration or 0)
+
+    for _, slot in ipairs(equip_slots) do
+        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
+        local modifiers = song_modifiers[item.id]
+
+        if modifiers then
+            for index, value in pairs(modifiers) do
+                if index == 1 then
+                    duration_modifier = duration_modifier + value
+                elseif index == 'augment' then
+                    augment_duration_modifier = augment_duration_modifier + value
+                end
+            end
+        end
+    end
+    
+    -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus.
+    local duration = (base_duration * duration_modifier + duration_bonus) * troubadour_modifier
+
+    duration = math.floor(duration)
+
+    -- Still applies to debuff songs, e.g. Elegy
+    local duration_map = table.map(enfeebling_resist_states,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end
+    )
+
+    local modifiers = {
+        ["Troubadour"] = troubadour_modifier,
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier,
+    }
+
+    return duration_map, modifiers
+end
+
 function get_basic_info(spell, equipment)
     local spell_info = windower.res.spells[spell.recast_id]
     local equipment = equipment or windower.ffxi.get_items('equipment')

@@ -75,6 +75,11 @@ composure_modifiers = {
     [5] = 0.5
 }
 
+song_modifiers = {
+    -- See https://www.bg-wiki.com/ffxi/Category:Song#Song_Effect_Duration for % based increases
+    -- See https://www.bg-wiki.com/ffxi/Category:Instrument for flat increases
+}
+
 composure_gear = S{
     11068,
     11088,
