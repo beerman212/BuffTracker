@@ -193,7 +193,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     -- Soul Voice doubles the duration of Hymnus, Mazurka, and Scherzo, but is not compatible with Marcato.
     if spell.english:endswith("Hymnus") or spell.english:endswith("Mazurka") or spell.english:endswith("Scherzo") then
-        if buffs.Soul_Voice then
+        if buffs["Soul Voice"] then
             soul_voice_modifier = 2
         elseif buffs.Marcato then
             soul_voice_modifier = 1.5
