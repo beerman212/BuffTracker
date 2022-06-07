@@ -28,7 +28,13 @@ function action_handler(action)
                         local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                         tracked_buff:calculate_buff_duration()
 
-                        tracked_buff:print_log(true)
+                        if not tracked_mobs[target.id] then
+                            tracked_mobs[target.id] = TrackedMob.new(target)
+                        end
+
+                        tracked_mobs[target.id]:add_buff(tracked_buff)
+
+                        --tracked_buff:print_log(true)
                     end
                 end
             else
@@ -66,7 +72,12 @@ function action_handler(action)
                             local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                             tracked_buff:calculate_buff_duration()
 
-                            tracked_buff:print_log(true)
+                            if not tracked_mobs[target.id] then
+                                tracked_mobs[target.id] = TrackedMob.new(target)
+                            end
+
+                            tracked_mobs[target.id]:add_buff(tracked_buff)
+                            --tracked_buff:print_log(true)
                         end
                     end
                 end
@@ -77,7 +88,7 @@ function action_handler(action)
     end
 end
 
-windower.register_event('action message', function(id, data)
+windower.register_event('incoming chunk', function(id, data)
     if id == 0x029 then
         local action_message = {}
         action_message.id = data:unpack('H', 0x19) % 32768
@@ -88,6 +99,59 @@ windower.register_event('action message', function(id, data)
             -- TODO: Process tracked mob disposal
         elseif wears_off_message_ids:contains(action_message.id) then
             -- TODO: Process expired debuff
+            
+            if tracked_mobs[action_message.target_id] then
+                tracked_mobs[action_message.target_id]:remove_buff(action_message.param)
+            end
+
         end
+    end
+end)
+
+windower.register_event('target change', function(id)
+    local target = windower.ffxi.get_mob_by_index(id)
+    --local sub_target = windower.ffxi.get_mob_by_target("st")
+
+    if target then
+        maintargetbox:clear()
+
+        local display_info = target.name .. "\n" .. "---------------\n"
+
+        if tracked_mobs[target.id] then
+            local mob = tracked_mobs[target.id]
+            if mob:has_buffs() then
+                for _, buff in pairs(mob.buffs) do
+                    display_info = display_info .. "\n%-12s : %10s":format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
+                end
+            end
+        end
+
+        maintargetbox:text(display_info)
+        maintargetbox:show()
+    else
+        maintargetbox:hide()
+    end
+end)
+
+windower.register_event('prerender', function(id)
+    local target = windower.ffxi.get_mob_by_target("t")
+
+    if target then
+        maintargetbox:clear()
+        local display_info = target.name .. "\n" .. "---------------\n"
+
+        if tracked_mobs[target.id] then
+            local mob = tracked_mobs[target.id]
+            if mob:has_buffs() then
+                for _, buff in pairs(mob.buffs) do
+                    display_info = display_info .. "\n%-12s : %10s":format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
+                end
+            end
+        end
+
+        maintargetbox:text(display_info)
+        maintargetbox:show()
+    else
+        maintargetbox:hide()
     end
 end)

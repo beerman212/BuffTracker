@@ -26,29 +26,41 @@ function TrackedMob:has_buffs()
 end
 
 function TrackedMob:add_buff(buff)
-    if self:has_buffs() then
-        if self.buffs:containskey(buff.buff_id) then
-            local current_buff = self.buffs[buff.buff_id]
+    if buff.spell.overwrites then
+        for _, spell_id in ipairs(buff.spell.overwrites) do
+            if self.buffs[buff:get_buff_id()] and self.buffs[buff:get_buff_id()]:get_spell_id() == spell_id then
+                local overwritten_buff = self.buffs[buff:get_buff_id()]
+                overwritten_buff:expire()
 
-            if buff.spell_info.overrides and buff.spell_info.overrides:contains(current_buff:get_spell_id()) then
-                self.buffs[buff.buff_id] = buff
+                self.buffs[buff:get_buff_id()] = nil
             end
-        else
-            self.buff[buff.buff_id] = buff
         end
-    else
-        self.buffs[buff.buff_id] = buff
     end
+
+    self.buffs[buff:get_buff_id()] = buff
+
+    self:sort_buffs()
 end
 
-function TrackedMob:remove_buff(buff)
+function TrackedMob:remove_buff(buff_id)
     if self:has_buffs() then
-        if self.buffs:containskey(buff.buff_id) then
-            self.buffs[buff.buff_id] = nil
+        if self.buffs:containskey(buff_id) then
+            local removed_buff = self.buffs[buff_id]
+            removed_buff:expire()
+
+            self.buffs[buff_id] = nil
+
+            return removed_buff
         end
     end
 end
 
 function TrackedMob:clear_buffs()
     self.buffs:clear()
+end
+
+function TrackedMob:sort_buffs()
+    self.buffs:sort(function(buff1, buff2)
+        return buff1:get_remaining_duration_in_seconds() < buff2:get_remaining_duration_in_seconds()
+    end)
 end

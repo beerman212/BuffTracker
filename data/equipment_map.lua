@@ -13,7 +13,7 @@ enfeebling_modifiers = {
     [27061] = {saboteur=0.12}, -- Lethargy Gantherots +1
 }
 
-enfeebling_resist_states = {
+resist_state_modifiers = {
     [0] = 1,
     [1] = 0.5,
     [2] = 0.25,
@@ -27,6 +27,7 @@ enhancing_modifiers = {
     [11223] = {perpetuance=0.25}, -- Savant's Bracers +1
     [11148] = {0.2}, -- Estoqueur's Houseaux +2
     [11248] = {0.1}, -- Estoqueur's Houseaux +1
+    [16204] = {0.1}, -- Estoqueur's Cape
     [20677] = {augment=0.04}, -- Colada
     [21072] = {augment=0.06}, -- Gada
     [22054] = {augment=0.1}, -- Grioavolr
@@ -45,6 +46,7 @@ enhancing_modifiers = {
     [25441] = {augment=0.15}, -- Duelist's Torque
     [25442] = {augment=0.2}, -- Duelist's Torque +1
     [25443] = {augment=0.25}, -- Duelist's Torque +2
+    [26041] = {-0.5}, -- Sroda Necklace
     [26250] = {0.2}, -- Sucellos's Cape
     [26354] = {0.1}, -- Embla Sash
     [26419] = {0.1}, -- Ammurapi Shield

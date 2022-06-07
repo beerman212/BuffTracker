@@ -45,17 +45,21 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     end
 
     if buffs.Composure and target.id ~= player.id then
-        composure_modifier = composure_modifier + composure_modifiers[composure_count] or 0
+        composure_modifier = composure_modifier + (composure_modifiers[composure_count] or 0)
     end
 
     local enhancing_duration = base_duration + duration_bonus
 
-    for _, modifier in ipairs({duration_modifier, augment_duration_modifier, composure_modifier, perpetuance_modifier, embolden_modifier}) do
+    for _, modifier in ipairs({duration_modifier, augment_duration_modifier, perpetuance_modifier, embolden_modifier}) do
         enhancing_duration = enhancing_duration * modifier
     end
 
-    if (not (spell.english:startswith("Protect") or spell.english:startswith("Shell") or spell.english == "Aquaveil")) and enhancing_duration > 60 * 30 then
-        enhancing_duration = 60 * 30
+    if enhancing_duration < (60 * 30) then
+        enhancing_duration = enhancing_duration * composure_modifier
+
+        if enhancing_duration > (60 * 30) then
+            enhancing_duration = 60 * 30
+        end
     end
 
     local modifiers = {
@@ -126,7 +130,7 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
 
     duration = math.floor(duration)
 
-    local duration_map = table.map(enfeebling_resist_states,
+    local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
         end
@@ -141,15 +145,6 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
     }
 
     return duration_map, modifiers
-end
-
-function get_basic_info(spell, equipment)
-    local spell_info = windower.res.spells[spell.recast_id]
-    local equipment = equipment or windower.ffxi.get_items('equipment')
-    local player = windower.ffxi.get_player()
-    local buffs = get_player_buffs(player)
-
-    return spell_info, equipment, player, buffs
 end
 
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)
@@ -169,7 +164,7 @@ end
 function get_base_enhancing_composure_modifier(player, spell, target, buffs)
     local composure_modifier = 1
 
-    if buffs.Composure and target.id == player.id and not (spell.english:startswith("Protect") or spell.english:startswith("Shell") or spell.english == "Aquaveil") then
+    if buffs.Composure and target.id == player.id then
         composure_modifier = 3
     end
 
