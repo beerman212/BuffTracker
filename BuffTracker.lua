@@ -18,16 +18,31 @@ local extdata = require('extdata')
 
 require('message_map')
 require('EventHandler')
-require('TrackedMobs')
+--require('TrackedMobs')
 require('TrackedBuff')
+require('TrackedMob')
 require('HelperFunctions')
 mob_data = require('data/mob_data')
 require('data/equipment_map')
 
 ActionPacket.open_listener(action_handler)
 
-tracked_mobs = TrackedMobs.new()
+tracked_mobs = T{}
 
-function apply_buff()
+defaults = {}
+defaults.pos = {}
+defaults.pos.x = 600
+defaults.pos.y = 300
+defaults.text = {}
+defaults.text.font = 'Consolas'
+defaults.text.size = 10
+defaults.flags = {}
+defaults.flags.bold = false
+defaults.flags.draggable = true
+defaults.bg = {}
+defaults.bg.alpha = 255
+defaults.duration = {}
 
-end
+settings = config.load(defaults)
+maintargetbox = texts.new("Main Target", settings)
+maintargetbox:show()
