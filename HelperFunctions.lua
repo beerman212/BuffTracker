@@ -1,3 +1,5 @@
+require('logger')
+
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
@@ -145,6 +147,146 @@ function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
     }
 
     return duration_map, modifiers
+end
+
+-- Song Calculations
+-- Reference page: https://www.bg-wiki.com/ffxi/Category:Song#Song_Effect_Duration
+function calculate_song_duration(player, spell, target, equipment, buffs)
+    if not (player or spell or target or equipment or buffs) then return end
+    local current_time = os.time()
+    
+    -- Troubadour is applied after all other modifiers
+
+    local duration_bonus = 0
+    local duration_modifier = 1
+    local augment_duration_modifier = 1
+    local troubadour_modifier = 1
+    local soul_voice_modifier = 1
+    local base_duration = (spell.duration or 0)
+
+    for _, slot in ipairs(equip_slots) do
+        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
+        local modifiers = song_modifiers[item.id]
+
+        if modifiers then
+            for index, value in pairs(modifiers) do
+                if index == 1 then
+                    duration_modifier = duration_modifier + value
+                elseif index == 'augment' then
+                    augment_duration_modifier = augment_duration_modifier + value
+                end
+            end
+        end
+    end
+
+    if buffs.Troubadour then
+        troubadour_modifier = 2
+    end
+
+    -- Job point bonus conditions:
+    -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
+    if buffs["Clarion Call"] then
+        duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
+    end
+    if buffs.Tenuto then
+        duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
+    end
+    if spell.english:endswith("Lullaby") then
+        duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
+    end
+
+    -- Soul Voice doubles the duration of Hymnus, Mazurka, and Scherzo, but is not compatible with Marcato.
+    if spell.english:endswith("Hymnus") or spell.english:endswith("Mazurka") or spell.english:endswith("Scherzo") then
+        if buffs["Soul Voice"] then
+            soul_voice_modifier = 2
+        elseif buffs.Marcato then
+            soul_voice_modifier = 1.5
+        end
+    end
+
+    -- TODO: Test if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
+    if buffs.Marcato then
+        duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
+    end
+    
+    -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus. Soul voice, where applicable is multiplicative with this term.
+    local duration = (base_duration * duration_modifier + duration_bonus) * troubadour_modifier * soul_voice_modifier
+
+    duration = math.floor(duration)
+
+    -- Still applies to debuff songs, e.g. Elegy
+    local duration_map = table.map(enfeebling_resist_states,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end
+    )
+
+    local modifiers = {
+        ["Troubadour"] = troubadour_modifier,
+        ["Soul Voice"] = soul_voice_modifier,
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier,
+    }
+
+    return duration, modifiers
+end
+
+-- Job Specific Calculations
+
+-- Warrior
+-- Tomahawk Duration (merits)
+-- Lots of stuff from equipment
+
+-- Monk
+
+-- White Mage
+
+-- Black Mage
+
+-- Red Mage
+
+-- Thief
+
+-- Paladin
+
+-- Dark Knight
+
+-- Beastmaster
+
+-- Bard
+
+-- Ranger
+
+-- Samurai
+
+-- Ninja
+
+-- Dragoon
+
+-- Summoner
+
+-- Blue Mage
+
+-- Corsair
+
+-- Puppetmaster
+
+-- Dancer
+
+-- Scholar
+
+-- Geomancer
+
+-- Rune Fencer
+
+function get_basic_info(spell, equipment)
+    local spell_info = windower.res.spells[spell.recast_id]
+    local equipment = equipment or windower.ffxi.get_items('equipment')
+    local player = windower.ffxi.get_player()
+    local buffs = get_player_buffs(player)
+
+    return spell_info, equipment, player, buffs
 end
 
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)

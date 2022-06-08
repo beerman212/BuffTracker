@@ -40,6 +40,25 @@ function action_handler(action)
             else
 
             end
+        elseif skill_name == "Singing" then
+                if actor_id == player.id then
+                    local equipment = windower.ffxi.get_items('equipment')
+    
+                    for target in actionpacket:get_targets() do
+                        local action = target:get_actions()()
+                        local message_id = action:get_message_id()
+    
+                        if no_effect_message_ids:contains(message_id) then
+    
+                        else
+                            local buff = res.buffs[action.param]
+                            local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                            tracked_buff:calculate_buff_duration()
+    
+                            tracked_buff:print_log(true)
+                        end
+                    end
+                end
         elseif skill_name == "Enfeebling Magic" then
             if actor_id == player.id then
                 local equipment = windower.ffxi.get_items('equipment')

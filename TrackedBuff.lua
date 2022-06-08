@@ -204,6 +204,14 @@ function TrackedBuff:calculate_buff_duration()
                     self.calculated_duration = duration
                     self.modifiers = modifiers
                 end
+            
+            elseif skill == "Singing" then
+                local duration, modifiers = calculate_song_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+
+                if duration then
+                    self.calculated_duration = duration
+                    self.modifiers = modifiers
+                end
 
             elseif skill == "Enfeebling Magic" then
                 local duration_map, modifiers = calculate_enfeebling_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
