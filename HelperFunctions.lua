@@ -202,9 +202,11 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         elseif buffs.Marcato then
             soul_voice_modifier = 1.5
         end
-        if buffs.Marcato then
-            duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
-        end
+    end
+
+    -- TODO: Test if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
+    if buffs.Marcato then
+        duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
     end
     
     -- Flat bonuses and percentage based bonuses are both applied independently, then multiplied by Troubadour's doubling bonus. Soul voice, where applicable is multiplicative with this term.
