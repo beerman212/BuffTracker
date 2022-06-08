@@ -185,7 +185,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     -- Job point bonus conditions:
     -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
-    if buffs.Clarion_Call then
+    if buffs["Clarion Call"] then
         duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
     end
     if buffs.Tenuto then
