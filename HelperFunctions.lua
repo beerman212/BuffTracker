@@ -217,7 +217,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     duration = math.floor(duration)
 
-    -- Still applies to debuff songs, e.g. Elegy
+    -- Applies to debuff songs, e.g. Elegy
     local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
