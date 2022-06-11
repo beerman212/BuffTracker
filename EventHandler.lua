@@ -54,8 +54,13 @@ function action_handler(action)
                             local buff = res.buffs[action.param]
                             local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                             tracked_buff:calculate_buff_duration()
-    
-                            tracked_buff:print_log(true)
+     
+                            if not tracked_mobs[target.id] then
+                                tracked_mobs[target.id] = TrackedMob.new(target)
+                            end
+
+                            tracked_mobs[target.id]:add_buff(tracked_buff)
+                            -- tracked_buff:print_log(true)
                         end
                     end
                 end
