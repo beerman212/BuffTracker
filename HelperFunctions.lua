@@ -184,14 +184,17 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 
     -- Job point bonus conditions:
-    -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
+    -- clarion_call_effect (2s/per); tenuto_effect (2s/per); lullaby_duration; marcato_effect
     if buffs["Clarion Call"] then
         duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
     end
-    if buffs.Tenuto then
+
+    -- TODO: Verify this applies only to self
+    if buffs.Tenuto and target.id == player.id then
         duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
     end
-    if spell.english:endswith("Lullaby") then
+
+    if spell.english:contains("Lullaby") then
         duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
     end
 
@@ -204,7 +207,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         end
     end
 
-    -- TODO: Test if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
+    -- TODO: Test to confirm if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
     if buffs.Marcato then
         duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
     end
@@ -214,8 +217,8 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     duration = math.floor(duration)
 
-    -- Still applies to debuff songs, e.g. Elegy
-    local duration_map = table.map(enfeebling_resist_states,
+    -- Applies to debuff songs, e.g. Elegy
+    local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
         end
@@ -229,7 +232,12 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         ["Augment"] = augment_duration_modifier,
     }
 
-    return duration, modifiers
+    if spell.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if spell.targets == 1 then
+        return duration, modifiers
+    end
 end
 
 -- Job Specific Calculations
