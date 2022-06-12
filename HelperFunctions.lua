@@ -1,5 +1,5 @@
 require('logger')
-requrie('extdata')
+extdata = require('extdata')
 
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
@@ -170,12 +170,26 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         local modifiers = song_modifiers[item.id]
 
-        -- Augments
-        local augs = Extdata.decode(item).augments
-        if augs then
-            log(augs)
+        if item.id == 14365 then
+            if item.extdata == " " then
+                log("Empty augment data")
+            end
         end
 
+        -- Augments
+        local augs = extdata.decode(item).augments
+        if augs then
+            for k,v in pairs(augs) do
+                if v:contains("All Songs+1") then
+                    duration_modifier = duration_modifier + 0.1
+                elseif v:contains("All Songs+2") then
+                    duration_modifier = duration_modifier + 0.2
+                elseif v:contains("All Songs+3") then
+                    duration_modifier = duration_modifier + 0.3
+                end
+            end
+        end
+                
         if modifiers then
             for index, value in pairs(modifiers) do
                 if index == 1 then
