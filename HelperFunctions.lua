@@ -163,7 +163,27 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local troubadour_modifier = 1
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
+    -- Whitelist for song types
+    local song_types = {
+        madrigal=true,
+        minuet=true,
+        march=true,
+        ballad=true,
+        scherzo=true,
+        requiem=true,
+        threnody=true,
+        prelude=true,
+        mambo=true,
+        elegy=true,
+        minne=true,
+        carol=true,
+        hymnus=true,
+        lullaby=true,
+        mazurka=true,
+        final=true
+    }
 
+    -- TODO: Implement augments, e.g. for Linos
     for _, slot in ipairs(equip_slots) do
         local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         local modifiers = song_modifiers[item.id]
@@ -172,8 +192,11 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
             for index, value in pairs(modifiers) do
                 if index == 1 then
                     duration_modifier = duration_modifier + value
-                elseif index == 'augment' then
-                    augment_duration_modifier = augment_duration_modifier + value
+                elseif spell.english:lower():contains(index) and song_types[index] then
+                    duration_modifier = duration_modifier + value
+                elseif index == all_songs then
+                    duration_modifier = duration_modifier + value
+                -- TODO: Address special cases, such as Dynamis Horn
                 end
             end
         end
@@ -181,17 +204,21 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     if buffs.Troubadour then
         troubadour_modifier = 2
+        duration_bonus = duration_bonus + (player.job_points.brd.troubadour_effect or 0) * 2
     end
 
     -- Job point bonus conditions:
-    -- clarion_call_effect (2x/per); tenuto_effect (2x/per); lullaby_duration; marcato_effect
+    -- clarion_call_effect (2s/per); tenuto_effect (2s/per); lullaby_duration; marcato_effect
     if buffs["Clarion Call"] then
         duration_bonus = duration_bonus + (player.job_points.brd.clarion_call_effect or 0) * 2
     end
-    if buffs.Tenuto then
+
+    -- TODO: Verify this applies only to self
+    if buffs.Tenuto and target.id == player.id then
         duration_bonus = duration_bonus + (player.job_points.brd.tenuto_effect or 0) * 2
     end
-    if spell.english:endswith("Lullaby") then
+
+    if spell.english:contains("Lullaby") then
         duration_bonus = duration_bonus + (player.job_points.brd.lullaby_duration or 0)
     end
 
@@ -204,7 +231,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         end
     end
 
-    -- TODO: Test if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
+    -- TODO: Test to confirm if both SV and Marcato are in use that the JP duration bonus for Marcato would still apply
     if buffs.Marcato then
         duration_bonus = duration_bonus + (player.job_points.brd.marcato_effect or 0)
     end
@@ -214,8 +241,8 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     duration = math.floor(duration)
 
-    -- Still applies to debuff songs, e.g. Elegy
-    local duration_map = table.map(enfeebling_resist_states,
+    -- Applies to debuff songs, e.g. Elegy
+    local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
         end
@@ -229,7 +256,12 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         ["Augment"] = augment_duration_modifier,
     }
 
-    return duration, modifiers
+    if spell.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if spell.targets == 1 then
+        return duration, modifiers
+    end
 end
 
 -- Job Specific Calculations
