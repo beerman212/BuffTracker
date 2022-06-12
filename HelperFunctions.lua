@@ -1,4 +1,5 @@
 require('logger')
+requrie('extdata')
 
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
@@ -163,36 +164,23 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local troubadour_modifier = 1
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
-    -- Whitelist for song types
-    local song_types = {
-        madrigal=true,
-        minuet=true,
-        march=true,
-        ballad=true,
-        scherzo=true,
-        requiem=true,
-        threnody=true,
-        prelude=true,
-        mambo=true,
-        elegy=true,
-        minne=true,
-        carol=true,
-        hymnus=true,
-        lullaby=true,
-        mazurka=true,
-        final=true
-    }
 
     -- TODO: Implement augments, e.g. for Linos
     for _, slot in ipairs(equip_slots) do
         local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         local modifiers = song_modifiers[item.id]
 
+        -- Augments
+        local augs = Extdata.decode(item).augments
+        if augs then
+            log(augs)
+        end
+
         if modifiers then
             for index, value in pairs(modifiers) do
                 if index == 1 then
                     duration_modifier = duration_modifier + value
-                elseif spell.english:lower():contains(index) and song_types[index] then
+                elseif spell.english:lower():contains(index) then
                     duration_modifier = duration_modifier + value
                 elseif index == all_songs then
                     duration_modifier = duration_modifier + value
