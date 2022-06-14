@@ -1,6 +1,9 @@
 require('logger')
+extdata = require('extdata')
 
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
+
+augment_cache = {}
 
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
@@ -163,36 +166,24 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local troubadour_modifier = 1
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
-    -- Whitelist for song types
-    local song_types = {
-        madrigal=true,
-        minuet=true,
-        march=true,
-        ballad=true,
-        scherzo=true,
-        requiem=true,
-        threnody=true,
-        prelude=true,
-        mambo=true,
-        elegy=true,
-        minne=true,
-        carol=true,
-        hymnus=true,
-        lullaby=true,
-        mazurka=true,
-        final=true
-    }
+    local equipped_items = {}
+    local serial_list = {}
+    local item = {}
 
-    -- TODO: Implement augments, e.g. for Linos
+    -- Standard modifiers
     for _, slot in ipairs(equip_slots) do
-        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
-        local modifiers = song_modifiers[item.id]
+        item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
+        equipped_items[slot] = item
 
+        table.insert(serial_list, item.id .. item.extdata)
+
+        local modifiers = song_modifiers[item.id]
+   
         if modifiers then
             for index, value in pairs(modifiers) do
                 if index == 1 then
                     duration_modifier = duration_modifier + value
-                elseif spell.english:lower():contains(index) and song_types[index] then
+                elseif spell.english:lower():contains(index) then
                     duration_modifier = duration_modifier + value
                 elseif index == all_songs then
                     duration_modifier = duration_modifier + value
@@ -202,9 +193,23 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         end
     end
 
+    --Augments
+    find_augments(equipped_items)
+
+    -- Sum the values, then treat the modifier as 10% per unit
+    duration_modifier = duration_modifier + (search_augments(serial_list, 'All Songs'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.1)
+
+    -- TODO: Verify syntax of bard jse merits is correct
+    if buffs.Nightingale and search_augments(serial_list, 'Enhances "Nightingale" effect') then
+        duration_bonus = duration_bonus + (player.merits.nightingale or 0) * 4
+    end
+
     if buffs.Troubadour then
         troubadour_modifier = 2
         duration_bonus = duration_bonus + (player.job_points.brd.troubadour_effect or 0) * 2
+        if search_augments(serial_list, 'Enhances "Troubadour" effect') then
+            duration_bonus = duration_bonus + (player.merits.troubadour or 0) * 4
+        end
     end
 
     -- Job point bonus conditions:
@@ -427,4 +432,46 @@ function get_time_stamp(time)
     else
         return os.date("%X", time)
     end
+end
+
+-- Refactor to cache all augments in inventory
+function find_augments(equipment)
+    local found_augments = T{}
+    
+    for slot, values in pairs(equipment) do
+        serialNo = equipment[slot].id .. equipment[slot].extdata
+
+        if not augment_cache[serialNo] and equipment[slot].augments == nil then
+            local extdata_parse = extdata.decode(equipment[slot])
+            if extdata_parse and extdata_parse.type == 'Augmented Equipment' then
+                equipment[slot].augments = T(extdata_parse.augments):filter(function(a) return a ~= 'none' end)
+                augment_cache[serialNo] = nil
+            else
+                augment_cache[serialNo] = nil
+            end
+        end
+        if not augment_cache[serialNo] and equipment[slot].augments then
+            local concat_augments = ''
+            for _, aug_string in ipairs(equipment[slot].augments) do
+                concat_augments = concat_augments .. aug_string .. '\n'
+            end
+            
+            augment_cache[serialNo] = concat_augments
+        end
+    end
+end
+
+function search_augments(equipped_serials, query)
+    local found_augments = {}
+    for _, serial in ipairs(equipped_serials) do
+        if augment_cache[serial] then
+            local concat_augments = augment_cache[serial]
+            local match, sign, value, percent = concat_augments:match('"?('..query..')"?%s*([+%-]?)([%dVI]*)(%%?)')
+            if match then
+                local aug = T{match=match, sign=sign, value=value, percent=percent} --this could probably get cached somewhere too
+                table.insert(found_augments, aug)
+            end
+        end
+    end
+    return(T(found_augments))
 end
