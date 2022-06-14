@@ -167,12 +167,15 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
     local equipped_items = {}
+    local serial_list = {}
     local item = {}
 
     -- Standard modifiers
     for _, slot in ipairs(equip_slots) do
         item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         equipped_items[slot] = item
+
+        table.insert(serial_list, item.id .. item.extdata)
 
         local modifiers = song_modifiers[item.id]
    
@@ -191,9 +194,11 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 
     --Augments
-    local found_all_songs_augments = find_augments(equipped_items, {'Resist Sleep'})
-    --local total_all_songs_augments = found_all_songs_augments['Resist Sleep']:reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0)
-    -- (found_all_songs_augments)
+    find_augments(equipped_items)
+
+    -- Sum the values, then treat the modifier as 10% per unit
+    -- In this example, I am wearing a set of pants with a resist sleep +2 modifier standing in for "All Songs"
+    duration_modifier = duration_modifier + (search_augments(serial_list, 'Resist Sleep'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.1)
 
     if buffs.Troubadour then
         troubadour_modifier = 2
@@ -423,13 +428,11 @@ function get_time_stamp(time)
 end
 
 -- Refactor to cache all augments in inventory
-function find_augments(equipment, stat_names)
+function find_augments(equipment)
     local found_augments = T{}
     
     for slot, values in pairs(equipment) do
         serialNo = equipment[slot].id .. equipment[slot].extdata
-
-        log(serialNo)
 
         if not augment_cache[serialNo] and equipment[slot].augments == nil then
             local extdata_parse = extdata.decode(equipment[slot])
@@ -439,34 +442,29 @@ function find_augments(equipment, stat_names)
             else
                 augment_cache[serialNo] = nil
             end
-            --should probably cache this parsed augment data somewhere so you only have to do it once
         end
         if not augment_cache[serialNo] and equipment[slot].augments then
-            for _, stat_name in ipairs(stat_names) do
-                local concat_augments = ''
-                for _, aug_string in ipairs(equipment[slot].augments) do
-                    concat_augments = concat_augments .. aug_string .. '\n'
-                end
-                
-                augment_cache[serialNo] = concat_augments
-                -- log(augment_cache[serialNo]) - works
-                --[[
-                local match, sign, value, percent = concat_augments:match('"?('..stat_name..')"?%s*([+%-]?)([%dVI]*)(%%?)')
-                log(match .. sign .. value .. percent)
-                if match then
-                    local aug = T{match=match, sign=sign, value=value, percent=percent} --this could probably get cached somewhere too
-                    found_augments[stat_name][slot] = aug
-                    if not found_augments[stat_name] then
-                        found_augments = T{}
-                    end
-                end--]]
+            local concat_augments = ''
+            for _, aug_string in ipairs(equipment[slot].augments) do
+                concat_augments = concat_augments .. aug_string .. '\n'
+            end
+            
+            augment_cache[serialNo] = concat_augments
+        end
+    end
+end
+
+function search_augments(equipped_serials, query)
+    local found_augments = {}
+    for _, serial in ipairs(equipped_serials) do
+        if augment_cache[serial] then
+            local concat_augments = augment_cache[serial]
+            local match, sign, value, percent = concat_augments:match('"?('..query..')"?%s*([+%-]?)([%dVI]*)(%%?)')
+            if match then
+                local aug = T{match=match, sign=sign, value=value, percent=percent} --this could probably get cached somewhere too
+                table.insert(found_augments, aug)
             end
         end
     end
-
-    return found_augments
-end
-
-function search_augments(query)
-    return 'foo'
+    return(T(found_augments))
 end
