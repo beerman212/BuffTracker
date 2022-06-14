@@ -197,12 +197,19 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     find_augments(equipped_items)
 
     -- Sum the values, then treat the modifier as 10% per unit
-    -- In this example, I am wearing a set of pants with a resist sleep +2 modifier standing in for "All Songs"
-    duration_modifier = duration_modifier + (search_augments(serial_list, 'Resist Sleep'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.1)
+    duration_modifier = duration_modifier + (search_augments(serial_list, 'All Songs'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.1)
+
+    -- TODO: Verify syntax of bard jse merits is correct
+    if buffs.Nightingale and search_augments(serial_list, 'Enhances "Nightingale" effect') then
+        duration_bonus = duration_bonus + (player.merits.brd.nightingale or 0) * 4
+    end
 
     if buffs.Troubadour then
         troubadour_modifier = 2
         duration_bonus = duration_bonus + (player.job_points.brd.troubadour_effect or 0) * 2
+        if search_augments(serial_list, 'Enhances "Troubadour" effect') then
+            duration_bonus = duration_bonus + (player.merits.brd.troubadour or 0) * 4
+        end
     end
 
     -- Job point bonus conditions:
