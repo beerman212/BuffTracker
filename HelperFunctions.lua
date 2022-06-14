@@ -3,6 +3,8 @@ extdata = require('extdata')
 
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
+augment_cache = {}
+
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
     if not (player or spell or target or equipment or buffs) then return end
@@ -164,32 +166,16 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local troubadour_modifier = 1
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
+    local equipped_items = {}
+    local item = {}
 
-    -- TODO: Implement augments, e.g. for Linos
+    -- Standard modifiers
     for _, slot in ipairs(equip_slots) do
-        local item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
+        item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
+        equipped_items[slot] = item
+
         local modifiers = song_modifiers[item.id]
-
-        if item.id == 14365 then
-            if item.extdata == " " then
-                log("Empty augment data")
-            end
-        end
-
-        -- Augments
-        local augs = extdata.decode(item).augments
-        if augs then
-            for k,v in pairs(augs) do
-                if v:contains("All Songs+1") then
-                    duration_modifier = duration_modifier + 0.1
-                elseif v:contains("All Songs+2") then
-                    duration_modifier = duration_modifier + 0.2
-                elseif v:contains("All Songs+3") then
-                    duration_modifier = duration_modifier + 0.3
-                end
-            end
-        end
-                
+   
         if modifiers then
             for index, value in pairs(modifiers) do
                 if index == 1 then
@@ -203,6 +189,11 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
             end
         end
     end
+
+    --Augments
+    local found_all_songs_augments = find_augments(equipped_items, {'Resist Sleep'})
+    --local total_all_songs_augments = found_all_songs_augments['Resist Sleep']:reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0)
+    -- (found_all_songs_augments)
 
     if buffs.Troubadour then
         troubadour_modifier = 2
@@ -429,4 +420,53 @@ function get_time_stamp(time)
     else
         return os.date("%X", time)
     end
+end
+
+-- Refactor to cache all augments in inventory
+function find_augments(equipment, stat_names)
+    local found_augments = T{}
+    
+    for slot, values in pairs(equipment) do
+        serialNo = equipment[slot].id .. equipment[slot].extdata
+
+        log(serialNo)
+
+        if not augment_cache[serialNo] and equipment[slot].augments == nil then
+            local extdata_parse = extdata.decode(equipment[slot])
+            if extdata_parse and extdata_parse.type == 'Augmented Equipment' then
+                equipment[slot].augments = T(extdata_parse.augments):filter(function(a) return a ~= 'none' end)
+                augment_cache[serialNo] = nil
+            else
+                augment_cache[serialNo] = nil
+            end
+            --should probably cache this parsed augment data somewhere so you only have to do it once
+        end
+        if not augment_cache[serialNo] and equipment[slot].augments then
+            for _, stat_name in ipairs(stat_names) do
+                local concat_augments = ''
+                for _, aug_string in ipairs(equipment[slot].augments) do
+                    concat_augments = concat_augments .. aug_string .. '\n'
+                end
+                
+                augment_cache[serialNo] = concat_augments
+                -- log(augment_cache[serialNo]) - works
+                --[[
+                local match, sign, value, percent = concat_augments:match('"?('..stat_name..')"?%s*([+%-]?)([%dVI]*)(%%?)')
+                log(match .. sign .. value .. percent)
+                if match then
+                    local aug = T{match=match, sign=sign, value=value, percent=percent} --this could probably get cached somewhere too
+                    found_augments[stat_name][slot] = aug
+                    if not found_augments[stat_name] then
+                        found_augments = T{}
+                    end
+                end--]]
+            end
+        end
+    end
+
+    return found_augments
+end
+
+function search_augments(query)
+    return 'foo'
 end
