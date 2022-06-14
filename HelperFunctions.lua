@@ -201,14 +201,14 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 
     -- TODO: Verify syntax of bard jse merits is correct
     if buffs.Nightingale and search_augments(serial_list, 'Enhances "Nightingale" effect') then
-        duration_bonus = duration_bonus + (player.merits.brd.nightingale or 0) * 4
+        duration_bonus = duration_bonus + (player.merits.nightingale or 0) * 4
     end
 
     if buffs.Troubadour then
         troubadour_modifier = 2
         duration_bonus = duration_bonus + (player.job_points.brd.troubadour_effect or 0) * 2
         if search_augments(serial_list, 'Enhances "Troubadour" effect') then
-            duration_bonus = duration_bonus + (player.merits.brd.troubadour or 0) * 4
+            duration_bonus = duration_bonus + (player.merits.troubadour or 0) * 4
         end
     end
 
