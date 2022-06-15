@@ -180,14 +180,12 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local soul_voice_modifier = 1
     local base_duration = (spell.duration or 0)
     local equipped_items = {}
-    local serial_list = {}
-    local item = {}
+
+    equipped_items = fetch_equipped_items(equipment)
 
     -- Standard modifiers
-    for _, slot in ipairs(equip_slots) do
-        item = set_item_metadata(windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot]))
-        
-        table.insert(equipped_items, item)
+    for _, item in ipairs(equipped_items) do
+        local modifiers = song_modifiers[item.id]
    
         if modifiers then
             for index, value in pairs(modifiers) do
@@ -204,7 +202,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 
     --Augments
-    -- All Songs,
+    -- All Songs
     duration_modifier = duration_modifier + search_augments(equipped_items, 'All Songs'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.1
 
     if buffs.Nightingale and next(search_augments(equipped_items, 'Enhances "Nightingale" effect')) then
@@ -441,6 +439,15 @@ function get_time_stamp(time)
     end
 end
 
+function fetch_equipped_items(equipment)
+    local equipped_items = {}
+    for _, slot in ipairs(equip_slots) do
+        local item = item_with_metadata(windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot]))
+        table.insert(equipped_items, item)
+    end
+    return equipped_items
+end
+
 metadata_definition = {
     __index = function(t, index)
         if index ~= 'augments' then
@@ -460,7 +467,7 @@ metadata_definition = {
     end
 }
 
-function set_item_metadata(item)
+function item_with_metadata(item)
     return setmetatable(item, metadata_definition)
 end
 
