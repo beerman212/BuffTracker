@@ -3,7 +3,20 @@ extdata = require('extdata')
 
 equip_slots = {'main','sub','range','ammo','head','neck','left_ear','right_ear','body','hands','left_ring','right_ring','back','waist','legs','feet'}
 
-augment_cache = {}
+augment_cache = setmetatable({}, {
+    __index = function(t, item)
+        return type(item) == 'table' and item.id and item.extdata and rawget(t, item.id .. item.extdata) or rawget(t, item)
+    end,
+    __newindex = function(t, item, value)
+        if not value or not value.type or not value.augments then return end
+        if value.type ~= 'Augmented Equipment' then
+            rawset(t, item.id .. item.extdata, false)
+        else
+            local augments = T(extdata_parse.augments):filter(function(a) return a ~= 'none' end)
+            rawset(t, item.id .. item.extdata, augments)
+        end
+    end,
+})
 
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
@@ -173,7 +186,6 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     -- Standard modifiers
     for _, slot in ipairs(equip_slots) do
         item = set_item_metadata(windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot]))
-        -- item = windower.ffxi.get_items(equipment[slot .. '_bag'], equipment[slot])
         
         table.insert(equipped_items, item)
    
@@ -429,27 +441,27 @@ function get_time_stamp(time)
     end
 end
 
-function set_item_metadata(item)
-    
-    setmetatable(item, {
-        __index = function(t, index)
-            if index ~= 'augments' then
-                return rawget(t, index)
-            else
-                local augments = augment_cache[t]
-                if augments == nil then
-                    local extdata_parse = extdata.decode(t)
-                    if extdata_parse and extdata_parse.type == 'Augmented Equipment' then
-                        augments = T(extdata_parse.augments):filter(function(a) return a ~= 'none' end)
-                    end
-                    augment_cache[t] = augments
-                    rawset(t, 'augments', augments)
+metadata_definition = {
+    __index = function(t, index)
+        if index ~= 'augments' then
+            return rawget(t, index)
+        else
+            local augments = augment_cache[t]
+            if augments == nil then
+                local extdata_parse = extdata.decode(t)
+                if extdata_parse and extdata_parse.type == 'Augmented Equipment' then
+                    augments = T(extdata_parse.augments):filter(function(a) return a ~= 'none' end)
                 end
-                return augment_cache[t]
+                augment_cache[t] = augments
+                rawset(t, 'augments', augments)
             end
+            return augment_cache[t]
         end
-    })
-    return item
+    end
+}
+
+function set_item_metadata(item)
+    return setmetatable(item, metadata_definition)
 end
 
 function search_augments(equipped_items, query)
