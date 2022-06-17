@@ -94,7 +94,7 @@ end
 
 function calculate_enfeebling_duration(player, spell, target, equipment, buffs)
     if not (player or spell or target or equipment or buffs) then return end
-    local current_time = os.time()
+    local current_time = socket.gettime()
     
     local composure_modifier = 1
     local composure_count = 0
@@ -169,7 +169,7 @@ end
 -- Reference page: https://www.bg-wiki.com/ffxi/Category:Song#Song_Effect_Duration
 function calculate_song_duration(player, spell, target, equipment, buffs)
     if not (player or spell or target or equipment or buffs) then return end
-    local current_time = os.time()
+    local current_time = socket.gettime()
     
     -- Troubadour is applied after all other modifiers
 
@@ -322,15 +322,6 @@ end
 
 -- Rune Fencer
 
-function get_basic_info(spell, equipment)
-    local spell_info = windower.res.spells[spell.recast_id]
-    local equipment = equipment or windower.ffxi.get_items('equipment')
-    local player = windower.ffxi.get_player()
-    local buffs = get_player_buffs(player)
-
-    return spell_info, equipment, player, buffs
-end
-
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     local saboteur_modifier = 1
 
@@ -366,16 +357,22 @@ function get_enhancing_duration_bonus(spell, player, buffs)
         duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].enhancing_magic_duration or 0)
     elseif player.main_job == "SCH" then
         if spell.english:startswith("Regen") and (buffs["Light Arts"] or buffs["Addendum: White"]) then
-            local regen_bonus = math.floor((player.main_job_level - 1) / 4) * 2
+            local light_arts_bonus = math.floor((player.main_job_level - 1) / 4) * 2
 
             if buffs["Tabula Rasa"] then
-                regen_bonus = regen_bonus * 2
+                light_arts_bonus = math.floor(light_arts_bonus * 1.5)
             end
 
-            duration_bonus = duration_bonus + regen_bonus
+            duration_bonus = duration_bonus + light_arts_bonus
 
-            if player.job_points[player.main_job].light_arts_effect then
-                duration_bonus = duration_bonus + (player.job_points[player.main_job].light_arts_effect * 3)
+            if player.job_points[player.main_job:lower()].light_arts_effect then
+                duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].light_arts_effect * 3)
+            end
+        end
+    elseif player.main_job == "WHM" then
+        if spell.english:startswith("Regen") then
+            if player.job_points[player.main_job:lower()].regen_duration then
+                duration_bonus = duration_bonus + (player.job_points[player.main_job:lower()].regen_duration * 3)
             end
         end
     else

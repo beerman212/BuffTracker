@@ -39,10 +39,13 @@ enhancing_modifiers = {
     [23149] = {0.08}, -- Pedagogy Gown +2
     [23178] = {0.18}, -- Atrophy Gloves +2
     [23285] = {0.25}, -- Futhark Trousers +2
+    [23310] = {0.05}, -- Theophany Duckbills +2
     [23469] = {0.15}, -- Vitiation Tabard +3
     [23484] = {0.12}, -- Pedagogy Gown +3
     [23513] = {0.2}, -- Atrophy Gloves +3
+    [23578] = {Regen=24}, -- Theophany Pantaloons +3
     [23620] = {0.3}, -- Futhark Trousers +3
+    [23645] = {0.1}, -- Theophany Duckbills +3
     [25441] = {augment=0.15}, -- Duelist's Torque
     [25442] = {augment=0.2}, -- Duelist's Torque +1
     [25443] = {augment=0.25}, -- Duelist's Torque +2
@@ -53,8 +56,10 @@ enhancing_modifiers = {
     [26736] = {augment=0.1}, -- Telchine Cap
     [26782] = {0.1}, -- Erilaz Galea
     [26783] = {0.15}, -- Erilaz Galea +1
-    [26894] = {augment=0.1,Regen=12}, -- Telchine Chasuble
-    [27048] = {augment=0.1}, -- Telchine Gloves
+    [26894] = {augment=0.09,Regen=12}, -- Telchine Chasuble
+    [27048] = {augment=0.09}, -- Telchine Gloves
+    [27056] = {Regen=21}, -- Ebers Mitts
+    [27057] = {Regen=22}, -- Ebers Mitts +1
     [27090] = {perpetuance=0.50}, -- Arbatel Bracers
     [27091] = {perpetuance=0.55}, -- Arbatel Bracers +1
     [27194] = {0.1}, -- Futhark Trousers

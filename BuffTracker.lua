@@ -12,6 +12,7 @@ local texts = require('texts')
 res = require('resources')
 require('tables')
 require('sets')
+socket = require('socket')
 
 require('config')
 local extdata = require('extdata')
@@ -34,10 +35,10 @@ defaults.pos = {}
 defaults.pos.x = 600
 defaults.pos.y = 300
 defaults.text = {}
-defaults.text.font = 'Consolas'
+defaults.text.font = 'Verdana'
 defaults.text.size = 10
 defaults.flags = {}
-defaults.flags.bold = false
+defaults.flags.bold = true
 defaults.flags.draggable = true
 defaults.bg = {}
 defaults.bg.alpha = 255
