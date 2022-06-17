@@ -181,21 +181,24 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local base_duration = (spell.duration or 0)
     local equipped_items = {}
 
+    -- Placeholder until actual condition mechanism is defined
+    local conditions = S{'Foo'}
+
     equipped_items = fetch_equipped_items(equipment)
 
     -- Standard modifiers
     for _, item in ipairs(equipped_items) do
         local modifiers = song_modifiers[item.id]
-   
         if modifiers then
-            for index, value in pairs(modifiers) do
-                if index == 1 then
-                    duration_modifier = duration_modifier + value
-                elseif spell.english:lower():contains(index) then
-                    duration_modifier = duration_modifier + value
-                elseif index == all_songs then
-                    duration_modifier = duration_modifier + value
-                -- TODO: Address special cases, such as Dynamis Horn
+            for song, index in pairs(modifiers) do
+                for _, values in ipairs(index) do
+                    if (not values.condition) or (values.condition and conditions:contains(values.condition)) then
+                        if spell.english:contains(song) then
+                            duration_modifier = duration_modifier + values.value
+                        elseif index == 'All Songs' or 'Increases song effect duration' then
+                            duration_modifier = duration_modifier + values.value
+                        end
+                    end
                 end
             end
         end
