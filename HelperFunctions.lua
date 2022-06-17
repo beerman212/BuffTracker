@@ -184,7 +184,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     -- Placeholder until actual condition mechanism is defined
     local conditions = S{'Foo'}
 
-    equipped_items = fetch_equipped_items(equipment)
+    local equipped_items = fetch_equipped_items(equipment)
 
     -- Standard modifiers
     for _, item in ipairs(equipped_items) do
