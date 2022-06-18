@@ -182,7 +182,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local equipped_items = {}
 
     -- Placeholder until actual condition mechanism is defined
-    local conditions = check_conditions()
+    local conditions = check_conditions(buffs)
 
     local equipped_items = fetch_equipped_items(equipment)
 
@@ -192,7 +192,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         if modifiers then
             for song, index in pairs(modifiers) do
                 for _, values in ipairs(index) do
-                    if (not values.condition) or (values.condition and conditions:contains(values.condition)) then
+                    if (not values.condition) or (values.condition and conditions[values.condition]) then
                         if spell.english:contains(song) then
                             duration_modifier = duration_modifier + values.value
                         elseif index == 'All Songs' or 'Increases song effect duration' then
@@ -491,16 +491,32 @@ function search_augments(equipped_items, query)
     return(T(found_augments))
 end
 
-function check_conditions()
+function check_conditions(buffs)
     local ffxi_info = windower.ffxi.get_info()
     local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
     local assault_zones = S{69,66,63,56,55,77}
     
-    return {
-        ['Assault:'] = function(context) return --[[do stuff here to check if you're in assault]] end,
-        ['In Dynamis:'] = function(context) return dynamis_zones:contains(ffxi_info.zone) end,
-        ['Reives:'] = function(context) return --[[do stuff here to check if you're in a reive]] end,
-        ['Nighttime:'] = function(context) return --[[do stuff here to check if its daytime]] end,
-        ['Daytime:'] = function(context) return --[[do stuff here to check if its nighttime]] end
+    -- Each of these should evaluate to either true or false
+    return T{
+        ['Assault:'] = assault_zones:contains(ffxi_info.zone),
+        ['In Dynamis:'] = dynamis_zones:contains(ffxi_info.zone),
+        ['Reives:'] = buffs['Reive Mark'], -- untested
+        ['Nighttime:'] = (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080),
+        ['Dusk to Dawn:'] = (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020),
+        ['Daytime:'] = (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
+        -- To be implemented
+        -- Set:
+        -- days of the week; firesday = 0
+        -- Weather:
+        -- moon phase
+        -- vs enemy types
+        -- citizenship
+        -- nation control
+        -- Latent Effect:
+        -- Poison:
+        -- Paralysis:
+        -- Besieged:
+        -- Salvage:
+        -- Unity Ranking:
     }
 end
