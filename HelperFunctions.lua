@@ -182,7 +182,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local equipped_items = {}
 
     -- Placeholder until actual condition mechanism is defined
-    local conditions = S{'Foo'}
+    local conditions = check_conditions()
 
     local equipped_items = fetch_equipped_items(equipment)
 
@@ -489,4 +489,18 @@ function search_augments(equipped_items, query)
         end
     end
     return(T(found_augments))
+end
+
+function check_conditions()
+    local ffxi_info = windower.ffxi.get_info()
+    local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
+    local assault_zones = S{69,66,63,56,55,77}
+    
+    return {
+        ['Assault:'] = function(context) return --[[do stuff here to check if you're in assault]] end,
+        ['In Dynamis:'] = function(context) return dynamis_zones:contains(ffxi_info.zone) end,
+        ['Reives:'] = function(context) return --[[do stuff here to check if you're in a reive]] end,
+        ['Nighttime:'] = function(context) return --[[do stuff here to check if its daytime]] end,
+        ['Daytime:'] = function(context) return --[[do stuff here to check if its nighttime]] end
+    }
 end

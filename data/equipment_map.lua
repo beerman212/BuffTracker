@@ -175,7 +175,7 @@ song_modifiers = {
                 {value=0.2}}},
     [17851] = { ['Ballad']={  -- storm fife
                 {value=0.1},
-                {condition='Assault'}}},
+                {condition='Assault:'}}},
     [17852] = { ['Requiem']={  -- Requiem flute
                 {value=0.4}}},
     [17853] = { ['March']={  -- Iron Ram horn
@@ -190,7 +190,7 @@ song_modifiers = {
                 {value=0.3}}},
     [18341] = { ['All Songs']={  -- millennium horn
                 {value=0.2},
-                {condition='Dynamis'}}},
+                {condition='In Dynamis:'}}},
     [18342] = { ['All Songs']={  -- Gjallarhorn
                 {value=0.2}}},
     [18343] = { ['Finale']={  -- Pan's horn
@@ -241,15 +241,15 @@ song_modifiers = {
                 {value=0.1}}},
     [21405] = { ['All Songs']={  -- eminent flute
                 {value=0.2}}},
-    [21406] = { ['All Songs']={  -- homestead flute; note this has a combined duration of +40% during reives
+    [21406] = { ['All Songs']={  -- homestead flute; note this has a combined duration of +40% during Reives
                 {value=0.2},
-                {condition='Reive'}},
+                {condition='Reives:'}},
                 ['Increases song effect duration']={
                 {value=0.2},
-                {condition='Reive'}}},
+                {condition='Reives:'}}},
     [21409] = { ['All Songs']={  -- forefront flute
                 {value=0.2},
-                {condition='Reive'}}},
+                {condition='Reives:'}}},
     [22249] = { ['All Songs']={  -- Miracle Cheer
                 {value=0.3}}},
     [23183] = { ['Lullaby']={  -- brioso cuffs +2
