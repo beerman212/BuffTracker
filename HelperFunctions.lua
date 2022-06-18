@@ -181,9 +181,6 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local base_duration = (spell.duration or 0)
     local equipped_items = {}
 
-    -- Placeholder until actual condition mechanism is defined
-    local conditions = check_conditions(buffs)
-
     local equipped_items = fetch_equipped_items(equipment)
 
     -- Standard modifiers
@@ -192,7 +189,8 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         if modifiers then
             for song, index in pairs(modifiers) do
                 for _, values in ipairs(index) do
-                    if (not values.condition) or (values.condition and conditions[values.condition]) then
+                    -- Add a filter here for which arguments a condition takes
+                    if (not values.condition) or (values.condition and conditions[values.condition])() then
                         if spell.english:contains(song) then
                             duration_modifier = duration_modifier + values.value
                         elseif index == 'All Songs' or 'Increases song effect duration' then
@@ -491,32 +489,46 @@ function search_augments(equipped_items, query)
     return(T(found_augments))
 end
 
-function check_conditions(buffs)
-    local ffxi_info = windower.ffxi.get_info()
-    local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
-    local assault_zones = S{69,66,63,56,55,77}
-    
-    -- Each of these should evaluate to either true or false
-    return T{
-        ['Assault:'] = assault_zones:contains(ffxi_info.zone),
-        ['In Dynamis:'] = dynamis_zones:contains(ffxi_info.zone),
-        ['Reives:'] = buffs['Reive Mark'], -- untested
-        ['Nighttime:'] = (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080),
-        ['Dusk to Dawn:'] = (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020),
-        ['Daytime:'] = (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
-        -- To be implemented
-        -- Set:
-        -- days of the week; firesday = 0
-        -- Weather:
-        -- moon phase
-        -- vs enemy types
-        -- citizenship
-        -- nation control
-        -- Latent Effect:
-        -- Poison:
-        -- Paralysis:
-        -- Besieged:
-        -- Salvage:
-        -- Unity Ranking:
-    }
-end
+-- This table will calculate at the time it is called, for the keys it is called
+conditions = {
+    ['In Dynamis:'] = function()
+        local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
+        local ffxi_info = windower.ffxi.get_info()
+        return dynamis_zones:contains(ffxi_info.zone)
+    end,
+    ['Assault:'] = function()
+        local assault_zones = S{69,66,63,56,55,77}
+        local ffxi_info = windower.ffxi.get_info()
+        return assault_zones:contains(ffxi_info.zone)
+    end,
+    -- Conditions which expect an argument will need to be handled separately
+    ['Reives:'] = function() 
+        return buffs['Reive Mark'] -- untested
+    end,
+    ['Nighttime:'] = function()
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080)
+    end,
+    ['Dusk to Dawn:'] = function()
+        local ffxi_info = windower.ffxi.get_info()
+        (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020)
+    end,
+    ['Daytime:'] = function()
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
+    end
+    -- To be implemented
+    -- Set:
+    -- Days of the week; firesday = 0
+    -- Weather:
+    -- Moon phase
+    -- vs enemy types
+    -- Citizenship
+    -- Nation control
+    -- Latent Effect:
+    -- Poison:
+    -- Paralysis:
+    -- Besieged:
+    -- Salvage:
+    -- Unity Ranking:
+}
