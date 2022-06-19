@@ -4,14 +4,15 @@ function action_handler(action)
     local actionpacket = ActionPacket.new(action)
     local category = actionpacket:get_category_string()
     local player = windower.ffxi.get_player()
-    local buffs = get_player_buffs(player)
 
     if category == 'spell_finish' then
         local actor_id = actionpacket:get_id()
         local spell = actionpacket:get_spell()
 
+        if not spell then return end
+
         local skill_name = res.skills[spell.skill].en
-        local time_cast = os.time()
+        local time_cast = socket.gettime()
 
         if skill_name == "Enhancing Magic" then
             if actor_id == player.id then
@@ -24,7 +25,7 @@ function action_handler(action)
                     if no_effect_message_ids:contains(message_id) then
 
                     else
-                        local buff = res.buffs[action.param]
+                        local buff = res.buffs[spell.status]
                         local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                         tracked_buff:calculate_buff_duration()
 
@@ -33,8 +34,7 @@ function action_handler(action)
                         end
 
                         tracked_mobs[target.id]:add_buff(tracked_buff)
-
-                        --tracked_buff:print_log(true)
+                        tracked_buff:print_log(true)
                     end
                 end
             else
@@ -91,8 +91,38 @@ function action_handler(action)
                     else
                         if damage_message_ids:contains(message_id) then
                             -- TODO: Handle Dia, Bio, Etc.
+                            local buff = res.buffs[spell.status]
+                            local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                            tracked_buff:calculate_buff_duration()
+
+                            if not tracked_mobs[target.id] then
+                                tracked_mobs[target.id] = TrackedMob.new(target)
+                            end
+
+                            if tracked_mobs[target.id]:has_buffs() and tracked_buff.spell.overwrites then
+                                -- TODO: Loop to identify buffs
+                                for _, spell_id in ipairs(tracked_buff.spell.overwrites) do
+                                    local status_to_overwrite = (res.spells[spell_id]).status
+                                    local removed_buff
+                                    
+                                    for buff_id, current_buff in pairs(tracked_mobs[target.id].buffs) do
+                                        if buff_id == status_to_overwrite and spell_id == current_buff:get_spell_id() then
+                                            removed_buff = tracked_mobs[target.id]:remove_buff(buff_id)
+                                            tracked_mobs[target.id]:add_buff(tracked_buff)
+                                        end
+                                    end
+
+                                    if removed_buff then
+                                        return removed_buff
+                                    else
+                                        tracked_mobs[target.id]:add_buff(tracked_buff)
+                                    end
+                                end
+                            else
+                                tracked_mobs[target.id]:add_buff(tracked_buff)
+                            end
                         else
-                            local buff = res.buffs[action.param]
+                            local buff = res.buffs[spell.status]
                             local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                             tracked_buff:calculate_buff_duration()
 
@@ -134,7 +164,6 @@ end)
 
 windower.register_event('target change', function(id)
     local target = windower.ffxi.get_mob_by_index(id)
-    --local sub_target = windower.ffxi.get_mob_by_target("st")
 
     if target then
         maintargetbox:clear()

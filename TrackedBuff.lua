@@ -6,7 +6,7 @@ TrackedBuff = {}
 --     self.spell_info = spell_info or {}
 --     self.caster_info = caster_info or {}
 --     self.equipment = equipment or {}
---     self.time_applied = time_applied or os.time()
+--     self.time_applied = time_applied or socket.gettime()
 --     self.calculated_durations = calculated_durations or {}
 --     self.is_saboteur = is_saboteur or false
 
@@ -22,7 +22,7 @@ function TrackedBuff.new(buff, spell, caster, target, equipment, time_applied)
     self.caster = caster or {id=-1,name="Unknown",buffs=T{}}
     self.target = target or {id=-1,name="Unknown"}
     self.equipment = equipment or {}
-    self.time_applied = time_applied or os.time()
+    self.time_applied = time_applied or socket.gettime()
 
     setmetatable(self, {__index = TrackedBuff, __eq = TrackedBuff.equals})
 
@@ -34,7 +34,7 @@ function TrackedBuff.equals(buff, other_buff)
 end
 
 function TrackedBuff:expire()
-    self.time_expired = os.time()
+    self.time_expired = socket.gettime()
 end
 
 function TrackedBuff:is_expired()
@@ -88,7 +88,7 @@ function TrackedBuff:get_target_name()
 end
 
 function TrackedBuff:get_current_duration_in_seconds()
-    local current_time = os.time()
+    local current_time = socket.gettime()
 
     return os.difftime(current_time, self.time_applied)
 end
@@ -143,7 +143,7 @@ end
 
 function TrackedBuff:get_remaining_duration_in_seconds(resist_state_value)
     local time_to_expire
-    local current_time = os.time()
+    local current_time = socket.gettime()
 
     if self.calculated_duration then
         if type(self.calculated_duration) == "number" then
