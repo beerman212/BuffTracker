@@ -84,137 +84,293 @@ composure_modifiers = {
 
 song_modifiers = {
     -- Song +
-    [11073] =  {madrigal=0.1}, -- aoidos' calot +2
-    [11093] =  {minuet=0.1}, -- aoidos' hongreline +2
-    [11113] =  {march=0.1}, -- aoidos' manchettes +2
-    [11133] =  {ballad=0.1}, -- aoidos' rhingrave +2
-    [11153] =  {scherzo=0.1}, -- aoidos' cothurnes +2
-    [17344] =  {minuet=0.1}, -- cornette
-    [17346] =  {requiem=0.2}, -- siren flute
-    [17347] =  {threnody=0.1}, -- piccolo
-    [17348] =  {madrigal=0.1}, -- traversiere
-    [17349] =  {march=0.2}, -- faerie piccolo
-    [17350] =  {prelude=0.1}, -- angel's flute
-    [17351] =  {mambo=0.1}, -- gemshorn
-    [17352] =  {elegy=0.1}, -- horn
-    [17354] =  {minne=0.1}, -- harp
-    [17360] =  {march=0.3,etude=0.3}, -- langeleik
-    [17361] =  {carol=0.1}, -- crumhorn
-    [17362] =  {requiem=0.2}, -- shofar
-    [17363] =  {hymnus=0.3,scherzo=0.1}, -- mass chalemie
-    [17366] =  {lullaby=0.1}, -- Mary's horn
-    [17367] =  {march=0.1}, -- Royal Spearman's horn
-    [17368] =  {threnody=0.2}, -- piccolo +1
-    [17369] =  {minuet=0.2}, -- cornette +1
-    [17370] =  {mambo=0.2}, -- gemshorn +1
-    [17371] =  {elegy=0.2}, -- horn +1
-    [17372] =  {requiem=0.1}, -- flute +1
-    [17373] =  {minne=0.1}, -- maple harp +1
-    [17374] =  {minne=0.2}, -- harp +1
-    [17375] =  {madrigal=0.2}, -- traversiere +1
-    [17377] =  {carol=0.2}, -- crumhorn +1
-    [17378] =  {prelude=0.2}, -- angel's flute +1
-    [17379] =  {requiem=0.2}, -- Hamelin flute
-    [17832] =  {requiem=0.3}, -- shofar +1
-    [17835] =  {march=0.1}, -- San d'Orian horn
-    [17836] =  {march=0.1}, -- Kingdom horn
-    [17838] =  {mazurka=0.2}, -- harlequin's horn
-    [17839] =  {finale=0.2}, -- military harp
-    [17840] =  {hymnus=0.2}, -- angel lyre
-    [17841] =  {lullaby=0.2}, -- nursemaid's harp
-    [17842] =  {threnody=0.3}, -- sorrowful harp
-    [17844] =  {requiem=0.1}, -- flute +2
-    [17845] =  {madrigal=0.2}, -- traversiere +2
-    [17846] =  {minuet=0.2}, -- cornette +2
-    [17847] =  {carol=0.2}, -- crumhorn +2
-    [17849] =  {mambo=0.1}, -- hellish bugle
-    [17850] =  {mambo=0.2}, -- hellish bugle +1
-    [17851] =  {assault_ballad=0.1}, -- storm fife
-    [17852] =  {requiem=0.4}, -- requiem flute
-    [17853] =  {march=0.2}, -- Iron Ram horn
-    [17854] =  {lullaby=0.2}, -- cradle horn
-    [17855] =  {finale=0.2}, -- ney
-    [17856] =  {elegy=0.3,minne=0.3}, -- syrinx
-    [18341] =  {dynamis_all_songs=0.2}, -- millennium horn
-    [18342] =  {all_songs=0.2}, -- Gjallarhorn
-    [18343] =  {finale=0.3,lullaby=0.3}, -- Pan's horn
-    [18572] =  {all_songs=0.4}, -- Gjallarhorn
-    [18577] =  {all_songs=0.2}, -- Gjallarhorn
-    [18578] =  {all_songs=0.2}, -- Gjallarhorn
-    [18579] =  {all_songs=0.3}, -- Gjallarhorn
-    [18580] =  {all_songs=0.3}, -- Gjallarhorn
-    [18831] =  {ballad=0.1}, -- crooner's cithara
-    [18832] =  {minuet=0.3}, -- apollo's flute
-    [18833] =  {madrigal=0.3,prelude=0.3}, -- cantabank's horn
-    [18834] =  {mambo=0.3,mazurka=0.3}, -- vihuela
-    [18840] =  {all_songs=0.4}, -- Gjallarhorn
-    [21399] =  {carol=0.2}, -- nibiru harp
-    [21400] =  {all_songs=0.1,lullaby=0.2}, -- blurred harp
-    [21401] =  {all_songs=0.2,ballad=0.2,lullaby=0.2}, -- blurred harp +1
-    [21402] =  {lullaby=0.2}, -- damani horn
-    [21403] =  {lullaby=0.3}, -- damani horn +1
-    [21404] =  {all_songs=0.1}, -- Linos
-    [21405] =  {all_songs=0.2}, -- eminent flute
-    [21406] =  {reives_all_songs=0.2,reives_song_duration=0.2}, -- homestead flute; note this has a combined duration of +40% during reives
-    [21409] =  {reives_all_songs=0.2}, -- forefront flute
-    [22249] =  {all_songs=0.3}, -- Miracle Cheer
-    [23183] =  {lullaby=0.1}, -- brioso cuffs +2
-    [23518] =  {lullaby=0.2}, -- brioso cuffs +3
-    [25901] =  {minne=0.1}, -- Mousai seraweels
-    [25902] =  {minne=0.2}, -- Mousai seraweels +1
-    [25968] =  {mambo=0.1}, -- Mousai crackows
-    [25969] =  {mambo=0.2}, -- Mousai crackows +1
-    [25988] =  {carol=0.1}, -- Mousai gages
-    [25989] =  {carol=0.2}, -- Mousai gages +1
-    [26031] =  {all_songs=0.1}, -- brioso whistle
-    [26032] =  {all_songs=0.2}, -- moonbow whistle
-    [26033] =  {all_songs=0.3}, -- moonbow whistle +1
-    [26255] =  {madrigal=0.1,prelude=0.1}, -- Intarabus's cape
-    [26537] =  {threnody=0.1}, -- Mousai manteel
-    [26538] =  {threnody=0.2}, -- Mousai manteel +1
-    [26758] =  {madrigal=0.1}, -- fili calot
-    [26759] =  {madrigal=0.1}, -- fili calot +1
-    [26916] =  {minuet=0.1}, -- fili hongreline
-    [26917] =  {minuet=0.1}, -- fili hongreline +1
-    [27070] =  {march=0.1}, -- fili manchettes
-    [27071] =  {march=0.1}, -- fili manchettes +1
-    [27255] =  {ballad=0.1}, -- fili rhingrave
-    [27256] =  {ballad=0.1}, -- fili rhingrave +1
-    [27429] =  {scherzo=0.1}, -- fili cothurnes
-    [27430] =  {scherzo=0.1}, -- fili cothurnes +1
-    [27952] =  {lullaby=0.1}, -- brioso cuffs
-    [27973] =  {lullaby=0.1}, -- brioso cuffs +1    
+    [11073] = { ['Madrigal']={  -- aoidos' calot +2
+                value=0.1}},
+    [11093] = { ['Minuet']={  -- aoidos' hongreline +2
+                value=0.1}},
+    [11113] = { ['March']={  -- aoidos' manchettes +2
+                value=0.1}},
+    [11133] = { ['Ballad']={  -- aoidos' rhingrave +2
+                value=0.1}},
+    [11153] = { ['Scherzo']={  -- aoidos' cothurnes +2
+                value=0.1}},
+    [17344] = { ['Minuet']={  -- cornette
+                value=0.1}},
+    [17346] = { ['Requiem']={  -- siren flute
+                value=0.2}},
+    [17347] = { ['Threnody']={  -- piccolo
+                value=0.1}},
+    [17348] = { ['Madrigal']={  -- traversiere
+                value=0.1}},
+    [17349] = { ['March']={  -- faerie piccolo
+                value=0.2}},
+    [17350] = { ['Prelude']={  -- angel's flute
+                value=0.1}},
+    [17351] = { ['Mambo']={  -- gemshorn
+                value=0.1}},
+    [17352] = { ['Elegy']={  -- horn
+                value=0.1}},
+    [17354] = { ['Minne']={  -- harp
+                value=0.1}},
+    [17360] = { ['March']={  -- langeleik
+                value=0.3},
+                ['Etude']={
+                value=0.3}},
+    [17361] = { ['Carol']={  -- crumhorn
+                value=0.1}},
+    [17362] = { ['Requiem']={  -- shofar
+                value=0.2}},
+    [17363] = { ['Hymnus']={  -- mass chalemie
+                value=0.3},
+                ['Scherzo']={
+                value=0.1}},
+    [17366] = { ['Lullaby']={  -- Mary's horn
+                value=0.1}},
+    [17367] = { ['March']={  -- Royal Spearman's horn
+                value=0.1}},
+    [17368] = { ['Threnody']={  -- piccolo +1
+                value=0.2}},
+    [17369] = { ['Minuet']={  -- cornette +1
+                value=0.2}},
+    [17370] = { ['Mambo']={  -- gemshorn +1
+                value=0.2}},
+    [17371] = { ['Elegy']={  -- horn +1
+                value=0.2}},
+    [17372] = { ['Requiem']={  -- flute +1
+                value=0.1}},
+    [17373] = { ['Minne']={  -- maple harp +1
+                value=0.1}},
+    [17374] = { ['Minne']={  -- harp +1
+                value=0.2}},
+    [17375] = { ['Madrigal']={  -- traversiere +1
+                value=0.2}},
+    [17377] = { ['Carol']={  -- crumhorn +1
+                value=0.2}},
+    [17378] = { ['Prelude']={  -- angel's flute +1
+                value=0.2}},
+    [17379] = { ['Requiem']={  -- Hamelin flute
+                value=0.2}},
+    [17832] = { ['Requiem']={  -- shofar +1
+                value=0.3}},
+    [17835] = { ['March']={  -- San d'Orian horn
+                value=0.1}},
+    [17836] = { ['March']={  -- Kingdom horn
+                value=0.1}},
+    [17838] = { ['Mazurka']={  -- harlequin's horn
+                value=0.2}},
+    [17839] = { ['Finale']={  -- military harp
+                value=0.2}},
+    [17840] = { ['Hymnus']={  -- angel lyre
+                value=0.2}},
+    [17841] = { ['Lullaby']={  -- nursemaid's harp
+                value=0.2}},
+    [17842] = { ['Threnody']={  -- sorrowful harp
+                value=0.3}},
+    [17844] = { ['Requiem']={  -- flute +2
+                value=0.1}},
+    [17845] = { ['Madrigal']={  -- traversiere +2
+                value=0.2}},
+    [17846] = { ['Minuet']={  -- cornette +2
+                value=0.2}},
+    [17847] = { ['Carol']={  -- crumhorn +2
+                value=0.2}},
+    [17849] = { ['Mambo']={  -- hellish bugle
+                value=0.1}},
+    [17850] = { ['Mambo']={  -- hellish bugle +1
+                value=0.2}},
+    [17851] = { ['Ballad']={  -- storm fife
+                value=0.1,
+                condition='Assault:'}},
+    [17852] = { ['Requiem']={  -- Requiem flute
+                value=0.4}},
+    [17853] = { ['March']={  -- Iron Ram horn
+                value=0.2}},
+    [17854] = { ['Lullaby']={  -- cradle horn
+                value=0.2}},
+    [17855] = { ['Finale']={  -- ney
+                value=0.2}},
+    [17856] = { ['Elegy']={  -- syrinx
+                value=0.3},
+                ['Minne']={
+                value=0.3}},
+    [18341] = { ['All Songs']={  -- millennium horn
+                value=0.2,
+                {condition='In Dynamis:'}}},
+    [18342] = { ['All Songs']={  -- Gjallarhorn
+                value=0.2}},
+    [18343] = { ['Finale']={  -- Pan's horn
+                value=0.3},
+                ['Lullaby']={
+                value=0.3}},
+    [18572] = { ['All Songs']={  -- Gjallarhorn
+                value=0.4}},
+    [18577] = { ['All Songs']={  -- Gjallarhorn
+                value=0.2}},
+    [18578] = { ['All Songs']={  -- Gjallarhorn
+                value=0.2}},
+    [18579] = { ['All Songs']={  -- Gjallarhorn
+                value=0.3}},
+    [18580] = { ['All Songs']={  -- Gjallarhorn
+                value=0.3}},
+    [18831] = { ['Ballad']={  -- crooner's cithara
+                value=0.1}},
+    [18832] = { ['Minuet']={  -- apollo's flute
+                value=0.3}},
+    [18833] = { ['Madrigal']={  -- cantabank's horn
+                value=0.3},
+                ['Prelude']={
+                value=0.3}},
+    [18834] = { ['Mambo']={  -- vihuela
+                value=0.3},
+                ['Mazurka']={
+                value=0.3}},
+    [18840] = { ['All Songs']={  -- Gjallarhorn
+                value=0.4}},
+    [21399] = { ['Carol']={  -- nibiru harp
+                value=0.2}},
+    [21400] = { ['All Songs']={  -- blurred harp
+                value=0.1},
+                ['Lullaby']={
+                value=0.2}},
+    [21401] = { ['All Songs']={  -- blurred harp +1
+                value=0.2},
+                ['Ballad']={
+                value=0.2},
+                ['Hymnus']={
+                value=0.2}},
+    [21402] = { ['Lullaby']={  -- damani horn
+                value=0.2}},
+    [21403] = { ['Lullaby']={  -- damani horn +1
+                value=0.3}},
+    [21404] = { ['All Songs']={  -- Linos
+                value=0.1}},
+    [21405] = { ['All Songs']={  -- eminent flute
+                value=0.2}},
+    [21406] = { ['All Songs']={  -- homestead flute; note this has a combined duration of +40% during Reives
+                value=0.2,
+                condition='Reives:'},
+                ['Increases song effect duration']={
+                value=0.2,
+                condition='Reives:'}},
+    [21409] = { ['All Songs']={  -- forefront flute
+                value=0.2,
+                condition='Reives:'}},
+    [22249] = { ['All Songs']={  -- Miracle Cheer
+                value=0.3}},
+    [23183] = { ['Lullaby']={  -- brioso cuffs +2
+                value=0.1}},
+    [23518] = { ['Lullaby']={  -- brioso cuffs +3
+                value=0.2}},
+    [25901] = { ['Minne']={  -- Mousai seraweels
+                value=0.1}},
+    [25902] = { ['Minne']={  -- Mousai seraweels +1
+                value=0.2}},
+    [25968] = { ['Mambo']={  -- Mousai crackows
+                value=0.1}},
+    [25969] = { ['Mambo']={  -- Mousai crackows +1
+                value=0.2}},
+    [25988] = { ['Carol']={  -- Mousai gages
+                value=0.1}},
+    [25989] = { ['Carol']={  -- Mousai gages +1
+                value=0.2}},
+    [26031] = { ['All Songs']={  -- brioso whistle
+                value=0.1}},
+    [26032] = { ['All Songs']={  -- moonbow whistle
+                value=0.2}},
+    [26033] = { ['All Songs']={  -- moonbow whistle +1
+                value=0.3}},
+    [26255] = { ['Madrigal']={  -- Intarabus's cape
+                value=0.1},
+                ['Prelude']={
+                value=0.1}},
+    [26537] = { ['Threnody']={  -- Mousai manteel
+                value=0.1}},
+    [26538] = { ['Threnody']={  -- Mousai manteel +1
+                value=0.2}},
+    [26758] = { ['Madrigal']={  -- fili calot
+                value=0.1}},
+    [26759] = { ['Madrigal']={  -- fili calot +1
+                value=0.1}},
+    [26916] = { ['Minuet']={  -- fili hongreline
+                value=0.1}},
+    [26917] = { ['Minuet']={  -- fili hongreline +1
+                value=0.1}},
+    [27070] = { ['March']={  -- fili manchettes
+                value=0.1}},
+    [27071] = { ['March']={  -- fili manchettes +1
+                value=0.1}},
+    [27255] = { ['Ballad']={  -- fili rhingrave
+                value=0.1}},
+    [27256] = { ['Ballad']={  -- fili rhingrave +1
+                value=0.1}},
+    [27429] = { ['Scherzo']={  -- fili cothurnes
+                value=0.1}},
+    [27430] = { ['Scherzo']={  -- fili cothurnes +1
+                value=0.1}},
+    [27952] = { ['Lullaby']={  -- brioso cuffs
+                value=0.1}},
+    [27973] = { ['Lullaby']={  -- brioso cuffs +1    
+                value=0.1}},
 
     -- Song Duration +%
-    [11093] = {0.1}, -- aoidos' hongreline +2 
-    [11193] = {0.05}, -- aoidos' hongreline +1 
-    [11618] = {0.1}, -- aoidos' matinee 
-    [18571] = {0.3}, -- Daurdabla 
-    [18575] = {0.25}, -- Daurdabla 
-    [18576] = {0.3}, -- Daurdabla 
-    [18839] = {0.3}, -- Daurdabla, Afterglow
-    [19000] = {0.1}, -- Carnwenhan 
-    [19069] = {0.2}, -- Carnwenhan 
-    [19089] = {0.3}, -- Carnwenhan 
-    [19621] = {0.4}, -- Carnwenhan 
-    [19719] = {0.4}, -- Carnwenhan 
-    [19828] = {0.5}, -- Carnwenhan--LV99 dagger
-    [19957] = {0.5}, -- Carnwenhan-- 99 non-ilvl, Afterglow
-    [20561] = {0.5}, -- Carnwenhan 
-    [20562] = {0.5}, -- Carnwenhan 
-    [20586] = {0.5}, -- Carnwenhan 
-    [20599] = {0.05}, -- kali 
-    [20629] = {0.05}, -- legato dagger 
-    [21398] = {0.5}, -- Marsyas 
-    [23317] = {0.13}, -- brioso slippers +2 
-    [23652] = {0.15}, -- brioso slippers +3 
-    [25865] = {0.12}, -- Inyanga shalwar 
-    [25866] = {0.15}, -- Inyanga shalwar +1 
-    [25882] = {0.17}, -- Inyanga shalwar +2 
-    [26916] = {0.11}, -- fili hongreline 
-    [26917] = {0.12}, -- fili hongreline +1 
-    [28074] = {0.1}, -- Marduk's shalwar +1 
-    [28232] = {0.1} -- brioso slippers 
+    [11093] = { ['Increases song effect duration']={  -- aoidos' hongreline +2 
+                value=0.1}},
+    [11193] = { ['Increases song effect duration']={  -- aoidos' hongreline +1 
+                value=0.05}},
+    [11618] = { ['Increases song effect duration']={  -- aoidos' matinee 
+                value=0.1}},
+    [18571] = { ['Increases song effect duration']={  -- Daurdabla 
+                value=0.3}},
+    [18575] = { ['Increases song effect duration']={  -- Daurdabla 
+                value=0.25}},
+    [18576] = { ['Increases song effect duration']={  -- Daurdabla 
+                value=0.3}},
+    [18839] = { ['Increases song effect duration']={  -- Daurdabla, Afterglow
+                value=0.3}},
+    [19000] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.1}},
+    [19069] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.2}},
+    [19089] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.3}},
+    [19621] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.4}},
+    [19719] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.4}},
+    [19828] = { ['Increases song effect duration']={  -- Carnwenhan--LV99 dagger
+                value=0.5}},
+    [19957] = { ['Increases song effect duration']={  -- Carnwenhan-- 99 non-ilvl, Afterglow
+                value=0.5}},
+    [20561] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.5}},
+    [20562] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.5}},
+    [20586] = { ['Increases song effect duration']={  -- Carnwenhan 
+                value=0.5}},
+    [20599] = { ['Increases song effect duration']={  -- kali 
+                value=0.05}},
+    [20629] = { ['Increases song effect duration']={  -- legato dagger 
+                value=0.05}},
+    [21398] = { ['Increases song effect duration']={  -- Marsyas 
+                value=0.5}},
+    [23317] = { ['Increases song effect duration']={  -- brioso slippers +2 
+                value=0.13}},
+    [23652] = { ['Increases song effect duration']={  -- brioso slippers +3 
+                value=0.15}},
+    [25865] = { ['Increases song effect duration']={  -- Inyanga shalwar 
+                value=0.12}},
+    [25866] = { ['Increases song effect duration']={  -- Inyanga shalwar +1 
+                value=0.15}},
+    [25882] = { ['Increases song effect duration']={  -- Inyanga shalwar +2 
+                value=0.17}},
+    [26916] = { ['Increases song effect duration']={  -- fili hongreline 
+                value=0.11}},
+    [26917] = { ['Increases song effect duration']={  -- fili hongreline +1 
+                value=0.12}},
+    [28074] = { ['Increases song effect duration']={  -- Marduk's shalwar +1 
+                value=0.1}},
+    [28232] = { ['Increases song effect duration']={  -- brioso slippers 
+                value=0.1}}
 }
 
 composure_gear = S{
