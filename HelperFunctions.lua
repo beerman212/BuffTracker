@@ -18,6 +18,10 @@ augment_cache = setmetatable({}, {
     end,
 })
 
+cache = {
+    get_info
+}
+
 function calculate_enhancing_duration(player, spell, target, equipment, buffs)
     --local spell_info, equipment, player, buffs = get_basic_info(spell, equipment)
     if not (player or spell or target or equipment or buffs) then return end
@@ -181,21 +185,19 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local base_duration = (spell.duration or 0)
     local equipped_items = {}
 
-    equipped_items = fetch_equipped_items(equipment)
+    local equipped_items = fetch_equipped_items(equipment)
 
     -- Standard modifiers
     for _, item in ipairs(equipped_items) do
         local modifiers = song_modifiers[item.id]
-   
         if modifiers then
-            for index, value in pairs(modifiers) do
-                if index == 1 then
-                    duration_modifier = duration_modifier + value
-                elseif spell.english:lower():contains(index) then
-                    duration_modifier = duration_modifier + value
-                elseif index == all_songs then
-                    duration_modifier = duration_modifier + value
-                -- TODO: Address special cases, such as Dynamis Horn
+            for song, index in pairs(modifiers) do
+                if (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if spell.english:contains(song) then
+                        duration_modifier = duration_modifier + index.value
+                    elseif index == 'All Songs' or 'Increases song effect duration' then
+                        duration_modifier = duration_modifier + index.value
+                    end
                 end
             end
         end
@@ -483,4 +485,56 @@ function search_augments(equipped_items, query)
         end
     end
     return(T(found_augments))
+end
+
+-- This table will calculate at the time it is called, for the keys it is called
+conditions = {
+    ['In Dynamis:'] = function(info, buffs)
+        local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
+        local ffxi_info = windower.ffxi.get_info()
+        return dynamis_zones:contains(ffxi_info.zone)
+    end,
+    ['Assault:'] = function(info, buffs)
+        local assault_zones = S{69,66,63,56,55,77}
+        local ffxi_info = windower.ffxi.get_info()
+        return assault_zones:contains(ffxi_info.zone)
+    end,
+    -- Conditions which expect an argument will need to be handled separately
+    ['Reives:'] = function(info, buffs) 
+        return buffs['Reive Mark'] -- untested
+    end,
+    ['Nighttime:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080)
+    end,
+    ['Dusk to Dawn:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020)
+    end,
+    ['Daytime:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
+    end
+    -- To be implemented
+    -- Set:
+    -- Days of the week; firesday = 0
+    -- Weather:
+    -- Moon phase
+    -- vs enemy types
+    -- Citizenship
+    -- Nation control
+    -- Latent Effect:
+    -- Poison:
+    -- Paralysis:
+    -- Besieged:
+    -- Salvage:
+    -- Unity Ranking:
+}
+
+function get_world_info()
+    local info = cache.get_info
+    if not info then
+        info = windower.ffxi.get_info()
+        cache.get_info = info       
+    end
 end
