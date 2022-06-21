@@ -282,7 +282,7 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     local equipped_items = fetch_equipped_items(equipment)
     local base_duration = (ability.duration or 0)
     local duration_bonus = 0
-    local duration_modifier = 0
+    local duration_modifier = 1
 
     -- Warrior
     -- Tomahawk Duration (merits)
