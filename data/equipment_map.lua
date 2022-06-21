@@ -373,6 +373,22 @@ song_modifiers = {
                 value=0.1}}
 }
 
+ja_modifiers = {
+    --Dragoon
+    [14227] = { ['Enhances "Ancient Circle Effect"']={ -- drachen brais
+        value=0.5}},
+    [15574] = { ['Enhances "Ancient Circle Effect"']={ -- drachen brais +1 
+    value=0.5}},
+    [23254] = { ['Enhances "Ancient Circle Effect"']={ -- vishap brais +2
+        value=0.5}},
+    [23589] = { ['Enhances "Ancient Circle Effect"']={ -- vishap brais +3
+        value=0.5}},
+    [28103] = { ['Enhances "Ancient Circle Effect"']={ -- vishap brais
+        value=0.5}},
+    [28124] = { ['Enhances "Ancient Circle Effect"']={ -- vishap brais +1
+        value=0.5}}
+}
+
 composure_gear = S{
     11068, -- estoqueur's chappel +2
     11088, -- estoqueur's sayon +2

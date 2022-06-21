@@ -257,8 +257,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
             return math.floor(duration * resist_multiplier)
-        end
-    )
+        end)
 
     local modifiers = {
         ["Troubadour"] = troubadour_modifier,
@@ -277,52 +276,90 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
 end
 
 -- Job Specific Calculations
+function calculate_ja_duration(player, ability, target, equipment, buffs)
+    if not (player or ability or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+    local equipped_items = fetch_equipped_items(equipment)
+    local base_duration = 0
+    local duration_bonus = 0
+    local duration_modifier = 0
 
--- Warrior
--- Tomahawk Duration (merits)
--- Lots of stuff from equipment
+    -- Warrior
+    -- Tomahawk Duration (merits)
 
--- Monk
+    -- Monk
+    -- Formless Strikes
 
--- White Mage
+    -- White Mage
 
--- Black Mage
+    -- Black Mage
 
--- Red Mage
+    -- Red Mage
 
--- Thief
+    -- Thief
 
--- Paladin
+    -- Paladin
 
--- Dark Knight
+    -- Dark Knight
 
--- Beastmaster
+    -- Beastmaster
 
--- Bard
+    -- Bard
 
--- Ranger
+    -- Ranger
 
--- Samurai
+    -- Samurai
 
--- Ninja
+    -- Ninja
 
--- Dragoon
+    -- Dragoon
+    if ability.english == "Angon" then
+        -- Angon duration is not resistable, but it can be blocked if Frightful Roar is in effect. How to check?
+        base_duration = 60
+        duration_bonus = (player.merits.angon -1) * 15
+    elseif ability.english == "Ancient Circle" then
+        base_duration = 180
+        for _, item in ipairs(equipped_items) do
+            local modifiers = ja_modifiers[item.id]
+            if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
+                duration_modifier = duration_bonus + modifiers['Enhances "Ancient Circle Effect"'].value
+            end
+        end
+    elseif ability.english == "Dragon Breaker" then
+        base_duration = 180
+        -- +1 second per job point
+        duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
+    end
+    -- Summoner
 
--- Summoner
+    -- Blue Mage
 
--- Blue Mage
+    -- Corsair
 
--- Corsair
+    -- Puppetmaster
 
--- Puppetmaster
+    -- Dancer
 
--- Dancer
+    -- Scholar
 
--- Scholar
+    -- Geomancer
 
--- Geomancer
+    -- Rune Fencer
 
--- Rune Fencer
+    local duration = (base_duration * duration_modifier) + duration_bonus
+
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
+
+    if ability.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if ability.targets == 1 then
+        return duration, modifiers
+    end
+end
 
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     local saboteur_modifier = 1

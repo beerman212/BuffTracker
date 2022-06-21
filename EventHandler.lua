@@ -139,6 +139,24 @@ function action_handler(action)
 
             end
         end
+    elseif category == 'job_ability' then
+        local actor_id = actionpacket:get_id()
+        local ability = actionpacket:get_spell()
+
+        if not ability then return end
+
+        local time_cast = socket.gettime()
+        local buff = res.buffs[ability.status]
+            local tracked_buff = TrackedBuff.new(buff, ability, player, target, equipment, time_cast)
+            tracked_buff:calculate_buff_duration()
+
+            if not tracked_mobs[target.id] then
+                tracked_mobs[target.id] = TrackedMob.new(target)
+            end
+
+            tracked_mobs[target.id]:add_buff(tracked_buff)
+            --tracked_buff:print_log(true)
+
     end
 end
 
@@ -174,7 +192,7 @@ windower.register_event('target change', function(id)
             local mob = tracked_mobs[target.id]
             if mob:has_buffs() then
                 for _, buff in pairs(mob.buffs) do
-                    display_info = display_info .. "\n%-12s : %10s":format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
+                    display_info = display_info .. ("\n%-12s : %10s"):format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
                 end
             end
         end
@@ -197,7 +215,7 @@ windower.register_event('prerender', function(id)
             local mob = tracked_mobs[target.id]
             if mob:has_buffs() then
                 for _, buff in pairs(mob.buffs) do
-                    display_info = display_info .. "\n%-12s : %10s":format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
+                    display_info = display_info .. ("\n%-12s : %10s"):format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
                 end
             end
         end
