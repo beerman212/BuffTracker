@@ -57,6 +57,10 @@ function TrackedBuff:get_spell_name()
     return self.spell.en
 end
 
+function TrackedBuff:get_spell_prefix()
+    return self.spell.get_spell_prefix
+end
+
 function TrackedBuff:get_spell_skill()
     return res.skills[self.spell.skill].en or nil
 end
@@ -195,6 +199,7 @@ end
 function TrackedBuff:calculate_buff_duration()
     if self:is_player_caster() then    
         local skill = self:get_spell_skill()
+        local prefix = self:get_spell_prefix()
 
         if skill then
             if skill == "Enhancing Magic" then
@@ -220,7 +225,7 @@ function TrackedBuff:calculate_buff_duration()
                     self.calculated_duration = duration_map
                     self.modifiers = modifiers
                 end
-            else -- Job abilities, find a better way to handle so weaponskills et all can be covered also
+            elseif prefix == "/jobability" then
                 local duration_map, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
                 if duration_map then
