@@ -280,7 +280,7 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     if not (player or ability or target or equipment or buffs) then return end
     local current_time = socket.gettime()
     local equipped_items = fetch_equipped_items(equipment)
-    local base_duration = 0
+    local base_duration = (ability.duration or 0)
     local duration_bonus = 0
     local duration_modifier = 0
 
@@ -315,10 +315,8 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     -- Dragoon
     if ability.english == "Angon" then
         -- Angon duration is not resistable, but it can be blocked if Frightful Roar is in effect. How to check?
-        base_duration = 60
         duration_bonus = (player.merits.angon -1) * 15
     elseif ability.english == "Ancient Circle" then
-        base_duration = 180
         for _, item in ipairs(equipped_items) do
             local modifiers = ja_modifiers[item.id]
             if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
@@ -326,7 +324,6 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
             end
         end
     elseif ability.english == "Dragon Breaker" then
-        base_duration = 180
         -- +1 second per job point
         duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
     end
