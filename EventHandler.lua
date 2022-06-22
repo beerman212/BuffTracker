@@ -4,13 +4,13 @@ function action_handler(action)
     local actionpacket = ActionPacket.new(action)
     local category = actionpacket:get_category_string()
     local player = windower.ffxi.get_player()
+    local spell = actionpacket:get_spell()
+    if not spell then return end
+    if not spell.duration then return end
+    local prefix = spell.prefix
 
     if category == 'spell_finish' then
         local actor_id = actionpacket:get_id()
-        local spell = actionpacket:get_spell()
-
-        if not spell then return end
-
         local skill_name = res.skills[spell.skill].en
         local time_cast = socket.gettime()
 
@@ -49,7 +49,7 @@ function action_handler(action)
                         local message_id = action:get_message_id()
     
                         if no_effect_message_ids:contains(message_id) then
-    
+                            -- do nothing
                         else
                             local buff = res.buffs[action.param]
                             local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
@@ -60,7 +60,6 @@ function action_handler(action)
                             end
 
                             tracked_mobs[target.id]:add_buff(tracked_buff)
-                            -- tracked_buff:print_log(true)
                         end
                     end
                 end
@@ -131,7 +130,6 @@ function action_handler(action)
                             end
 
                             tracked_mobs[target.id]:add_buff(tracked_buff)
-                            --tracked_buff:print_log(true)
                         end
                     end
                 end
@@ -139,24 +137,29 @@ function action_handler(action)
 
             end
         end
-    elseif category == 'job_ability' then
+    elseif prefix == '/jobability' then
         local actor_id = actionpacket:get_id()
-        local ability = actionpacket:get_spell()
+        if actor_id == player.id then
+            local equipment = windower.ffxi.get_items('equipment')
+            local time_cast = socket.gettime()
+            local buff = res.buffs[spell.status]
 
-        if not ability then return end
+            for target in actionpacket:get_targets() do
+                local action = target:get_actions()()
+                local message_id = action:get_message_id()
 
-        local time_cast = socket.gettime()
-        local buff = res.buffs[ability.status]
-            local tracked_buff = TrackedBuff.new(buff, ability, player, target, equipment, time_cast)
-            tracked_buff:calculate_buff_duration()
-
-            if not tracked_mobs[target.id] then
-                tracked_mobs[target.id] = TrackedMob.new(target)
+                if no_effect_message_ids:contains(message_id) then
+                    -- Do nothing
+                else
+                    local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                    tracked_buff:calculate_buff_duration()
+                    if not tracked_mobs[target.id] then
+                        tracked_mobs[target.id] = TrackedMob.new(target)
+                    end
+                    tracked_mobs[target.id]:add_buff(tracked_buff)
+                end
             end
-
-            tracked_mobs[target.id]:add_buff(tracked_buff)
-            --tracked_buff:print_log(true)
-
+        end
     end
 end
 
@@ -180,7 +183,7 @@ windower.register_event('incoming chunk', function(id, data)
     end
 end)
 
-windower.register_event('target change', function(id)
+windower.register_event('target ch  e', function(id)
     local target = windower.ffxi.get_mob_by_index(id)
 
     if target then

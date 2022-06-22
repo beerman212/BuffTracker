@@ -320,7 +320,7 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
         for _, item in ipairs(equipped_items) do
             local modifiers = ja_modifiers[item.id]
             if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
-                duration_modifier = duration_bonus + modifiers['Enhances "Ancient Circle Effect"'].value
+                duration_modifier = duration_modifier + modifiers['Enhances "Ancient Circle Effect"'].value
             end
         end
     elseif ability.english == "Dragon Breaker" then
@@ -535,7 +535,7 @@ conditions = {
     end,
     -- Conditions which expect an argument will need to be handled separately
     ['Reives:'] = function(info, buffs) 
-        return buffs['Reive Mark'] -- untested
+        return buffs['Reive Mark']
     end,
     ['Nighttime:'] = function(info, buffs)
         local ffxi_info = windower.ffxi.get_info()

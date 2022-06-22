@@ -58,11 +58,15 @@ function TrackedBuff:get_spell_name()
 end
 
 function TrackedBuff:get_spell_prefix()
-    return self.spell.get_spell_prefix
+    return self.spell.prefix
 end
 
 function TrackedBuff:get_spell_skill()
-    return res.skills[self.spell.skill].en or nil
+    if res.skills[self.spell.skill] == nil then
+        return nil
+    else 
+        return res.skills[self.spell.skill].en
+    end
 end
 
 function TrackedBuff:get_caster_id()
@@ -197,7 +201,7 @@ function TrackedBuff:get_time_to_expire(resist_state_value)
 end
 
 function TrackedBuff:calculate_buff_duration()
-    if self:is_player_caster() then    
+    if self:is_player_caster() then
         local skill = self:get_spell_skill()
         local prefix = self:get_spell_prefix()
 
@@ -225,13 +229,13 @@ function TrackedBuff:calculate_buff_duration()
                     self.calculated_duration = duration_map
                     self.modifiers = modifiers
                 end
-            elseif prefix == "/jobability" then
-                local duration_map, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+            end
+        elseif prefix == "/jobability" then
+            local duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
-                if duration_map then
-                    self.calculated_duration = duration_map
-                    self.modifiers = modifiers
-                end
+            if duration then
+                self.calculated_duration = duration
+                self.modifiers = modifiers
             end
         end
     end
