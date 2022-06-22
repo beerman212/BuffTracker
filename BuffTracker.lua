@@ -19,7 +19,6 @@ local extdata = require('extdata')
 
 require('message_map')
 require('EventHandler')
---require('TrackedMobs')
 require('TrackedBuff')
 require('TrackedMob')
 require('HelperFunctions')

@@ -183,7 +183,7 @@ windower.register_event('incoming chunk', function(id, data)
     end
 end)
 
-windower.register_event('target ch  e', function(id)
+windower.register_event('target change', function(id)
     local target = windower.ffxi.get_mob_by_index(id)
 
     if target then
