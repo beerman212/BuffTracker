@@ -326,6 +326,13 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     elseif ability.english == "Dragon Breaker" then
         -- +1 second per job point
         duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
+    else -- Consult bard loop for this
+        for _, item in ipairs(equipped_items) do
+            local modifiers = ja_modifiers[item.id]
+            if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
+                duration_modifier = duration_modifier + modifiers['Enhances "Ancient Circle Effect"'].value
+            end
+        end
     end
     -- Summoner
 
