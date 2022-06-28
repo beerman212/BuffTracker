@@ -57,8 +57,16 @@ function TrackedBuff:get_spell_name()
     return self.spell.en
 end
 
+function TrackedBuff:get_spell_type()
+    return self.spell.type
+end
+
 function TrackedBuff:get_spell_skill()
-    return res.skills[self.spell.skill].en or nil
+    if res.skills[self.spell.skill] == nil then
+        return nil
+    else 
+        return res.skills[self.spell.skill].en
+    end
 end
 
 function TrackedBuff:get_caster_id()
@@ -193,8 +201,9 @@ function TrackedBuff:get_time_to_expire(resist_state_value)
 end
 
 function TrackedBuff:calculate_buff_duration()
-    if self:is_player_caster() then    
+    if self:is_player_caster() then
         local skill = self:get_spell_skill()
+        local type = self:get_spell_type()
 
         if skill then
             if skill == "Enhancing Magic" then
@@ -220,6 +229,20 @@ function TrackedBuff:calculate_buff_duration()
                     self.calculated_duration = duration_map
                     self.modifiers = modifiers
                 end
+            end
+        elseif type == "JobAbility" then
+            local duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+            -- TODO: Consolidate this into one block after the calculate methods
+            if duration then
+                self.calculated_duration = duration
+                self.modifiers = modifiers
+            end
+        elseif type == "CorsairRoll" then
+            local duration, modifiers = calculate_roll_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+
+            if duration then
+                self.calculated_duration = duration
+                self.modifiers = modifiers
             end
         end
     end
