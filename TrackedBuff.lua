@@ -232,6 +232,13 @@ function TrackedBuff:calculate_buff_duration()
             end
         elseif type == "JobAbility" then
             local duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+            -- TODO: Consolidate this into one block after the calculate methods
+            if duration then
+                self.calculated_duration = duration
+                self.modifiers = modifiers
+            end
+        elseif type == "CorsairRoll" then
+            local duration, modifiers = calculate_roll_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
             if duration then
                 self.calculated_duration = duration

@@ -275,7 +275,7 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 end
 
--- Job Specific Calculations
+-- Job Ability Calculations
 function calculate_ja_duration(player, ability, target, equipment, buffs)
     if not (player or ability or target or equipment or buffs) then return end
     local current_time = socket.gettime()
@@ -284,71 +284,102 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     local duration_bonus = 0
     local duration_modifier = 1
 
+    -- Merit or Job Points
+
     -- Warrior
-    -- Tomahawk Duration (merits)
-
+        -- Tomahawk Duration
     -- Monk
-    -- Formless Strikes
-
+        -- Formless Strikes
     -- White Mage
-
     -- Black Mage
-
     -- Red Mage
-
     -- Thief
-
     -- Paladin
-
     -- Dark Knight
-
     -- Beastmaster
-
     -- Bard
-
     -- Ranger
-
     -- Samurai
-
     -- Ninja
-
     -- Dragoon
+
     if ability.english == "Angon" then
         -- Angon duration is not resistable, but it can be blocked if Frightful Roar is in effect. How to check?
         duration_bonus = (player.merits.angon -1) * 15
-    elseif ability.english == "Ancient Circle" then
-        for _, item in ipairs(equipped_items) do
-            local modifiers = ja_modifiers[item.id]
-            if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
-                duration_modifier = duration_modifier + modifiers['Enhances "Ancient Circle Effect"'].value
-            end
-        end
     elseif ability.english == "Dragon Breaker" then
         -- +1 second per job point
         duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
-    else -- Consult bard loop for this
-        for _, item in ipairs(equipped_items) do
-            local modifiers = ja_modifiers[item.id]
-            if modifiers and modifiers['Enhances "Ancient Circle Effect"'] then
-                duration_modifier = duration_modifier + modifiers['Enhances "Ancient Circle Effect"'].value
+    end
+
+    -- Summoner
+    -- Blue Mage
+    -- Corsair
+    -- Puppetmaster
+    -- Dancer
+    -- Scholar
+    -- Geomancer
+    -- Rune Fencer
+
+    -- Equipment
+    for _, item in ipairs(equipped_items) do
+        local modifiers = ja_modifiers[item.id]
+        if modifiers then
+            for key, index in pairs(modifiers) do
+                if key:contains(ability.english) and key:contains('duration') and
+                (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if index.percent == true then
+                        duration_modifier = duration_modifier + index.value
+                    else
+                        duration_bonus = duration_bonus + index.value
+                    end
+                end
             end
         end
     end
-    -- Summoner
 
-    -- Blue Mage
+    local duration = (base_duration * duration_modifier) + duration_bonus
 
-    -- Corsair
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
 
-    -- Puppetmaster
+    if ability.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if ability.targets == 1 then
+        return duration, modifiers
+    end
+end
 
-    -- Dancer
+-- Corsair Roll Calculations
+function calculate_roll_duration(player, ability, target, equipment, buffs)
+    if not (player or ability or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+    local equipped_items = fetch_equipped_items(equipment)
+    local base_duration = (ability.duration or 0)
+    local duration_bonus = 0
+    local duration_modifier = 1
 
-    -- Scholar
+    -- Merits and Job Points
+    duration_bonus = (player.job_points.cor.phantom_roll_effect * 2) or 0
 
-    -- Geomancer
-
-    -- Rune Fencer
+    -- Equipment
+    for _, item in ipairs(equipped_items) do
+        local modifiers = ja_modifiers[item.id]
+        if modifiers then -- Everything else
+            for key, index in pairs(modifiers) do
+                if key:contains('Phantom Roll') and key:contains('duration') and
+                (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if index.percent == true then
+                        duration_modifier = duration_modifier + index.value
+                    else
+                        duration_bonus = duration_bonus + index.value
+                    end
+                end
+            end
+        end
+    end
 
     local duration = (base_duration * duration_modifier) + duration_bonus
 

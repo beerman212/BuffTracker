@@ -7,7 +7,7 @@ function action_handler(action)
     local spell = actionpacket:get_spell()
     if not spell then return end
     if not spell.duration then return end
-    local prefix = spell.prefix
+    local type = spell.type
 
     if category == 'spell_finish' then
         local actor_id = actionpacket:get_id()
@@ -137,7 +137,7 @@ function action_handler(action)
 
             end
         end
-    elseif prefix == '/jobability' then
+    elseif type == 'JobAbility' or type == 'CorsairRoll' then
         local actor_id = actionpacket:get_id()
         if actor_id == player.id then
             local equipment = windower.ffxi.get_items('equipment')
