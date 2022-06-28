@@ -285,6 +285,46 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     local duration_modifier = 1
 
     -- Merit or Job Points
+    job_ability_table = {
+        ['Tomahawk'] = {
+            trigger='Tomahawk',
+            value=15,
+            initial=true}, -- This is an indication to use # of points in the category -1 as a multiplier
+        ['Fealty'] = {
+            trigger='Fealty',
+            value=5,
+            initial=true},
+        ['Killer Instinct'] = {
+            trigger='Killer Instinct',
+            value=10,
+            initial=true},
+        ['Angon'] = {
+            trigger='Angon',
+            value=15,
+            initial=true
+        }
+    }
+
+    --[[ Special cases that cannot currently be addressed
+    ['Invigorate'] = { -- Maybe special case
+        trigger='Chakra',
+        value=24
+        buff='Regen'},
+    ['Penance'] = {
+        trigger='Chi Blast',
+        value=20,
+        buff='Store TP' -- Buff ID 227
+        multiplier=-1},
+    ]]
+
+
+    -- General Purpose
+    for merit_title, index in pairs(job_ability_table) do
+        if index.trigger==ability.english then
+            local adjustment = index.initial and 1 or 0
+            duration_bonus = duration_bonus * (player.merits[merit_title:gsub(' ', '_'):lower()] - adjustment) * index.value
+        end
+    end
 
     -- Warrior
         -- Tomahawk Duration
@@ -303,10 +343,7 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
     -- Ninja
     -- Dragoon
 
-    if ability.english == "Angon" then
-        -- Angon duration is not resistable, but it can be blocked if Frightful Roar is in effect. How to check?
-        duration_bonus = (player.merits.angon -1) * 15
-    elseif ability.english == "Dragon Breaker" then
+    if ability.english == "Dragon Breaker" then
         -- +1 second per job point
         duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
     end
@@ -362,6 +399,19 @@ function calculate_roll_duration(player, ability, target, equipment, buffs)
     local duration_modifier = 1
 
     -- Merits and Job Points
+    -- Corsair
+    corsair_merit_modifiers = {
+        ['Winning Streak'] = { -- Special case
+            trigger='Phantom Roll',
+            value=20,
+            initial=true}
+    }
+
+    for merit_title, index in pairs(corsair_merit_modifiers) do
+        local adjustment = index.initial and 1 or 0
+        duration_bonus = duration_bonus * (player.merits[merit_title:gsub(' ', '_'):lower()] - adjustment) * index.value
+    end
+
     duration_bonus = (player.job_points.cor.phantom_roll_effect * 2) or 0
 
     -- Equipment
@@ -395,6 +445,54 @@ function calculate_roll_duration(player, ability, target, equipment, buffs)
         return duration, modifiers
     end
 end
+
+-- Dancer
+function calculate_dnc_duration(player, ability, target, equipment, buffs)
+    if not (player or ability or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+    local equipped_items = fetch_equipped_items(equipment)
+    local base_duration = (ability.duration or 0)
+    local duration_bonus = 0
+    local duration_modifier = 1
+
+    -- Merits and Job Points
+    if ability.type == 'Samba' then
+        duration_bonus = duration_bonus + player.job_points.dnc['Samba Duration'] * 2
+        duration_modifier = duration_modifier + (player.merits.saber_dance * 0.05)
+    end
+
+    if ability.type == 'Jig' then
+        duration_bonus = duration_bonus + player.job_points.dnc['Jig Duration']
+    end
+    --   Job Points
+
+    -- Equipment
+    for _, item in ipairs(equipped_items) do
+        local modifiers = ja_modifiers[item.id]
+        if modifiers then
+            -- TODO: populate
+            -- Sambas (~12 items, flat bonus)
+            -- Jigs (~19 items, all % based)
+        end
+    end
+
+    local duration = (base_duration * duration_modifier) + duration_bonus
+
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
+
+    if ability.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if ability.targets == 1 then
+        return duration, modifiers
+    end
+end
+
+
+-- Rune Fencer, which gets like 3 different types of things.. Ward, Effusion, Runes
 
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     local saboteur_modifier = 1
@@ -558,6 +656,11 @@ function search_augments(equipped_items, query)
     end
     return(T(found_augments))
 end
+
+-- Merit point modifiers
+merit_points = {
+
+}
 
 -- This table will calculate at the time it is called, for the keys it is called
 conditions = {
