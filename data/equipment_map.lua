@@ -374,340 +374,372 @@ song_modifiers = {
 }
 
 ja_modifiers = {
-    [20678] = { ['Increases "Berserk" duration']={ -- Firangi
-        value=15,
-        percent=false}},
-    [10730] = { ['Increases "Berserk" duration']={ -- warrior's calligae +2
-        value=10,
-        percent=false}},
-    [26246] = { ['Increases "Berserk" duration']={ -- Cichol's mantle
-        value=15,
-        percent=false}},
-    [27807] = { ['Increases "Berserk" duration']={ -- pummeler's lorica
-        value=10,
-        percent=false}},
-    [27828] = { ['Increases "Berserk" duration']={ -- pummeler's lorica +1
-        value=14,
-        percent=false}},
-    [27328] = { ['Increases "Berserk" duration']={ -- agoge calligae
-        value=15,
-        percent=false}},
-    [23107] = { ['Increases "Berserk" duration']={ -- pummeler's lorica +2
-        value=16,
-        percent=false}},
-    [23666] = { ['Increases "Berserk" duration']={ -- agoge calligae +3
-        value=30,
-        percent=false}},
-    [23442] = { ['Increases "Berserk" duration']={ -- pummeler's lorica +3
-        value=18,
-        percent=false}},
-    [23331] = { ['Increases "Berserk" duration']={ -- agoge calligae +2
-        value=25,
-        percent=false}},
-    [21764] = { ['Increases "Berserk" duration']={ -- drastic axe
+    [20678] = { ['"Berserk" duration']={ -- Firangi
+        value=15}},
+    [10730] = { ['"Berserk" duration']={ -- warrior's calligae +2
+        value=10}},
+    [26246] = { ['"Berserk" duration']={ -- Cichol's mantle
+        value=15}},
+    [27807] = { ['"Berserk" duration']={ -- pummeler's lorica
+        value=10}},
+    [27828] = { ['"Berserk" duration']={ -- pummeler's lorica +1
+        value=14}},
+    [27328] = { ['"Berserk" duration']={ -- agoge calligae
+        value=15}},
+    [23107] = { ['"Berserk" duration']={ -- pummeler's lorica +2
+        value=16}},
+    [23666] = { ['"Berserk" duration']={ -- agoge calligae +3
+        value=30}},
+    [23442] = { ['"Berserk" duration']={ -- pummeler's lorica +3
+        value=18}},
+    [23331] = { ['"Berserk" duration']={ -- agoge calligae +2
+        value=25}},
+    [21764] = { ['"Berserk" duration']={ -- drastic axe; special case in that it adds to current duration
         value=1,
-        percent=false,
         condition='skillchain_performed'}},
-    [20845] = { ['Increases "Berserk" duration']={ -- instigator
-        value=20,
-        percent=false},
-                ['Increases "Aggressor" duration']={
-        value=20,
-        percent=false}},
-    [20842] = { ['Increases "Berserk" duration']={ -- Reikiono
-        value=15,
-        percent=false}},
-    [27329] = { ['Increases "Berserk" duration']={ -- agoge calligae +1
-        value=20,
-        percent=false}},
-    [15245] = { ['Increases "Warcry" duration']={ -- warrior's mask +1
-        value=10,
-        percent=false}},
-    [15072] = { ['Increases "Warcry" duration']={ -- warrior's mask
-        value=10,
-        percent=false}},
-    [26624] = { ['Increases "Warcry" duration']={ -- agoge mask
-        value=25,
-        percent=false}},
-    [23398] = { ['Increases "Warcry" duration']={ -- agoge mask +3
-        value=30,
-        percent=false}},
-    [23063] = { ['Increases "Warcry" duration']={ -- agoge mask +2
-        value=30,
-        percent=false}},
-    [10650] = { ['Increases "Warcry" duration']={ -- warrior's mask +2
-        value=20,
-        percent=false}},
-    [26625] = { ['Increases "Warcry" duration']={ -- agoge mask +1
-        value=30,
-        percent=false}},
-    [23532] = { ['Increases "Defender" duration']={ -- agoge mufflers +3
-        value=15,
-        percent=false}},
-    [23197] = { ['Increases "Defender" duration']={ -- agoge mufflers +2
-        value=10,
-        percent=false}},
-    [23040] = { ['Increases "Aggressor" duration']={ -- pummeler's mask +2
-        value=16,
-        percent=false}},
-    [10670] = { ['Increases "Aggressor" duration']={ -- warrior's lorica +2
-        value=10,
-        percent=false}},
-    [26801] = { ['Increases "Aggressor" duration']={ -- agoge lorica +1
-        value=20,
-        percent=false}},
-    [26800] = { ['Increases "Aggressor" duration']={ -- agoge lorica
-        value=15,
-        percent=false}},
-    [23130] = { ['Increases "Aggressor" duration']={ -- agoge lorica +2
-        value=25,
-        percent=false}},
-    [23465] = { ['Increases "Aggressor" duration']={ -- agoge lorica +3
-        value=30,
-        percent=false}},
-    [23375] = { ['Increases "Aggressor" duration']={ -- pummeler's mask +3
-        value=18,
-        percent=false}},
-    [27663] = { ['Increases "Aggressor" duration']={ -- pummeler's mask
-        value=10,
-        percent=false}},
-    [27684] = { ['Increases "Aggressor" duration']={ -- pummeler's mask +1
-        value=14,
-        percent=false}},
-    [28249] = { ['Increases "Flee" duration']={ -- pillager's poulaines +1
-        value=16,
-        percent=false}},
-    [28228] = { ['Increases "Flee" duration']={ -- pillager's poulaines
-        value=15,
-        percent=false}},
-    [23313] = { ['Increases "Flee" duration']={ -- pillager's poulaines +2
-        value=17,
-        percent=false}},
-    [23648] = { ['Increases "Flee" duration']={ -- pillager's poulaines +3
-        value=18,
-        percent=false}},
-    [15358] = { ['Increases "Holy Circle" duration']={ -- gallant leggings +1
+    [20845] = { ['"Berserk" duration']={ -- instigator
+        value=20},
+                ['"Aggressor" duration']={
+        value=20}},
+    [20842] = { ['"Berserk" duration']={ -- Reikiono
+        value=15}},
+    [27329] = { ['"Berserk" duration']={ -- agoge calligae +1
+        value=20}},
+    [15245] = { ['"Warcry" duration']={ -- warrior's mask +1
+        value=10}},
+    [15072] = { ['"Warcry" duration']={ -- warrior's mask
+        value=10}},
+    [26624] = { ['"Warcry" duration']={ -- agoge mask
+        value=25}},
+    [23398] = { ['"Warcry" duration']={ -- agoge mask +3
+        value=30}},
+    [23063] = { ['"Warcry" duration']={ -- agoge mask +2
+        value=30}},
+    [10650] = { ['"Warcry" duration']={ -- warrior's mask +2
+        value=20}},
+    [26625] = { ['"Warcry" duration']={ -- agoge mask +1
+        value=30}},
+    [23532] = { ['"Defender" duration']={ -- agoge mufflers +3
+        value=15}},
+    [23197] = { ['"Defender" duration']={ -- agoge mufflers +2
+        value=10}},
+    [23040] = { ['"Aggressor" duration']={ -- pummeler's mask +2
+        value=16}},
+    [10670] = { ['"Aggressor" duration']={ -- warrior's lorica +2
+        value=10}},
+    [26801] = { ['"Aggressor" duration']={ -- agoge lorica +1
+        value=20}},
+    [26800] = { ['"Aggressor" duration']={ -- agoge lorica
+        value=15}},
+    [23130] = { ['"Aggressor" duration']={ -- agoge lorica +2
+        value=25}},
+    [23465] = { ['"Aggressor" duration']={ -- agoge lorica +3
+        value=30}},
+    [23375] = { ['"Aggressor" duration']={ -- pummeler's mask +3
+        value=18}},
+    [27663] = { ['"Aggressor" duration']={ -- pummeler's mask
+        value=10}},
+    [27684] = { ['"Aggressor" duration']={ -- pummeler's mask +1
+        value=14}},
+    [28249] = { ['"Flee" duration']={ -- pillager's poulaines +1
+        value=16}},
+    [28228] = { ['"Flee" duration']={ -- pillager's poulaines
+        value=15}},
+    [23313] = { ['"Flee" duration']={ -- pillager's poulaines +2
+        value=17}},
+    [23648] = { ['"Flee" duration']={ -- pillager's poulaines +3
+        value=18}},
+    [15358] = { ['"Holy Circle" duration']={ -- gallant leggings +1
         value=0.5,
         percent=true}},
-    [28229] = { ['Increases "Holy Circle" duration']={ -- reverence leggings
+    [28229] = { ['"Holy Circle" duration']={ -- reverence leggings
         value=0.5,
         percent=true}},
-    [23314] = { ['Increases "Holy Circle" duration']={ -- reverence leggings +2
+    [23314] = { ['"Holy Circle" duration']={ -- reverence leggings +2
         value=0.5,
         percent=true}},
-    [28250] = { ['Increases "Holy Circle" duration']={ -- reverence leggings +1
+    [28250] = { ['"Holy Circle" duration']={ -- reverence leggings +1
         value=0.5,
         percent=true}},
-    [23649] = { ['Increases "Holy Circle" duration']={ -- reverence leggings +3
+    [23649] = { ['"Holy Circle" duration']={ -- reverence leggings +3
         value=0.5,
         percent=true}},
-    [14095] = { ['Increases "Holy Circle" duration']={ -- gallant leggings
+    [14095] = { ['"Holy Circle" duration']={ -- gallant leggings
         value=0.5,
         percent=true}},
-    [21641] = { ['Increases "Cover" duration']={ -- Save the Queen III
-        value=30,
-        percent=false}},
-    [28251] = { ['Increases "Arcane Circle" duration']={ -- ignominy sollerets +1
+    [21641] = { ['"Cover" duration']={ -- Save the Queen III
+        value=30}},
+    [28251] = { ['"Arcane Circle" duration']={ -- ignominy sollerets +1
         value=0.5,
         percent=true}},
-    [28230] = { ['Increases "Arcane Circle" duration']={ -- ignominy sollerets
+    [28230] = { ['"Arcane Circle" duration']={ -- ignominy sollerets
         value=0.5,
         percent=true}},
-    [23315] = { ['Increases "Arcane Circle" duration']={ -- ignominy sollerets +2
+    [23315] = { ['"Arcane Circle" duration']={ -- ignominy sollerets +2
         value=0.5,
         percent=true}},
-    [23650] = { ['Increases "Arcane Circle" duration']={ -- ignominy sollerets +3
+    [23650] = { ['"Arcane Circle" duration']={ -- ignominy sollerets +3
         value=0.5,
         percent=true}},
-    [14096] = { ['Increases "Arcane Circle" duration']={ -- chaos sollerets
+    [14096] = { ['"Arcane Circle" duration']={ -- chaos sollerets
         value=0.5,
         percent=true}},
-    [15359] = { ['Increases "Arcane Circle" duration']={ -- chaos sollerets +1
+    [15359] = { ['"Arcane Circle" duration']={ -- chaos sollerets +1
         value=0.5,
         percent=true}},
-    [26253] = { ['Increases "Last Resort" duration']={ -- Ankou's mantle; Special case for Absorbs
-        value=15,
-        percent=false},
-                ['Increases "Absorb" duration']={
+    [26253] = { ['"Last Resort" duration']={ -- Ankou's mantle; Special case for Absorbs
+        value=15},
+                ['"Absorb" duration']={
         value=10,
         percent=true}},
-    [13971] = { ['Increases "Shadowbind" duration']={ -- hunter's bracers
-        value=10,
-        percent=false}},
-    [23184] = { ['Increases "Shadowbind" duration']={ -- orion bracers +2
-        value=14,
-        percent=false}},
-    [27974] = { ['Increases "Shadowbind" duration']={ -- orion bracers +1
-        value=12,
-        percent=false}},
-    [23519] = { ['Increases "Shadowbind" duration']={ -- orion bracers +3
-        value=16,
-        percent=false}},
-    [14900] = { ['Increases "Shadowbind" duration']={ -- hunter's bracers +1
-        value=10,
-        percent=false}},
-    [27953] = { ['Increases "Shadowbind" duration']={ -- orion bracers
-        value=10,
-        percent=false}},
-    [13868] = { ['Increases "Warding Circle" duration']={ -- myochin kabuto
+    [13971] = { ['"Shadowbind" duration']={ -- hunter's bracers
+        value=10}},
+    [23184] = { ['"Shadowbind" duration']={ -- orion bracers +2
+        value=14}},
+    [27974] = { ['"Shadowbind" duration']={ -- orion bracers +1
+        value=12}},
+    [23519] = { ['"Shadowbind" duration']={ -- orion bracers +3
+        value=16}},
+    [14900] = { ['"Shadowbind" duration']={ -- hunter's bracers +1
+        value=10}},
+    [27953] = { ['"Shadowbind" duration']={ -- orion bracers
+        value=10}},
+    [13868] = { ['"Warding Circle" duration']={ -- myochin kabuto
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=4,
-        percent=false}},
-    [15236] = { ['Increases "Warding Circle" duration']={ -- myochin kabuto +1
+                ['"Meditate" duration']={
+        value=4}},
+    [15236] = { ['"Warding Circle" duration']={ -- myochin kabuto +1
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=4,
-        percent=false}},
-    [23051] = { ['Increases "Warding Circle" duration']={ -- wakido kabuto +2
+                ['"Meditate" duration']={
+        value=4}},
+    [23051] = { ['"Warding Circle" duration']={ -- wakido kabuto +2
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=4,
-        percent=false}},
-    [27674] = { ['Increases "Warding Circle" duration']={ -- wakido kabuto
+                ['"Meditate" duration']={
+        value=4}},
+    [27674] = { ['"Warding Circle" duration']={ -- wakido kabuto
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=4,
-        percent=false}},
-    [23386] = { ['Increases "Warding Circle" duration']={ -- wakido kabuto +3
+                ['"Meditate" duration']={
+        value=4}},
+    [23386] = { ['"Warding Circle" duration']={ -- wakido kabuto +3
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=8,
-        percent=false}},
-    [27695] = { ['Increases "Warding Circle" duration']={ -- wakido kabuto +1
+                ['"Meditate" duration']={
+        value=8}},
+    [27695] = { ['"Warding Circle" duration']={ -- wakido kabuto +1
         value=0.5,
         percent=true},
-                ['Increases "Meditate" duration']={
-        value=4,
-        percent=false}},
-    [10701] = { ['Increases "Meditate" duration']={ -- saotome kote +2
-        value=8,
-        percent=false}},
-    [14920] = { ['Increases "Meditate" duration']={ -- saotome kote +1
-        value=4,
-        percent=false}},
-    [15113] = { ['Increases "Meditate" duration']={ -- saotome kote
-        value=4,
-        percent=false}},
-    [21979] = { ['Increases "Meditate" duration']={ -- Gekkei
-        value=4,
-        percent=false}},
-    [23208] = { ['Increases "Meditate" duration']={ -- sakonji kote +2
-        value=8,
-        percent=false}},
-    [23543] = { ['Increases "Meditate" duration']={ -- sakonji kote +3
-        value=12,
-        percent=false}},
-    [26257] = { ['Increases "Meditate" duration']={ -- Smertrios's mantle
-        value=8,
-        percent=false}},
-    [26998] = { ['Increases "Meditate" duration']={ -- sakonji kote
-        value=8,
-        percent=false}},
-    [26999] = { ['Increases "Meditate" duration']={ -- sakonji kote +1
-        value=8,
-        percent=false}},
-    [23254] = { ['Increases "Ancient Circle" duration']={ -- vishap brais +2
+                ['"Meditate" duration']={
+        value=4}},
+    [10701] = { ['"Meditate" duration']={ -- saotome kote +2
+        value=8}},
+    [14920] = { ['"Meditate" duration']={ -- saotome kote +1
+        value=4}},
+    [15113] = { ['"Meditate" duration']={ -- saotome kote
+        value=4}},
+    [21979] = { ['"Meditate" duration']={ -- Gekkei
+        value=4}},
+    [23208] = { ['"Meditate" duration']={ -- sakonji kote +2
+        value=8}},
+    [23543] = { ['"Meditate" duration']={ -- sakonji kote +3
+        value=12}},
+    [26257] = { ['"Meditate" duration']={ -- Smertrios's mantle
+        value=8}},
+    [26998] = { ['"Meditate" duration']={ -- sakonji kote
+        value=8}},
+    [26999] = { ['"Meditate" duration']={ -- sakonji kote +1
+        value=8}},
+    [23254] = { ['"Ancient Circle" duration']={ -- vishap brais +2
         value=0.5,
         percent=true}},
-    [23589] = { ['Increases "Ancient Circle" duration']={ -- vishap brais +3
+    [23589] = { ['"Ancient Circle" duration']={ -- vishap brais +3
         value=0.5,
         percent=true}},
-    [28103] = { ['Increases "Ancient Circle" duration']={ -- vishap brais
+    [28103] = { ['"Ancient Circle" duration']={ -- vishap brais
         value=0.5,
         percent=true}},
-    [28124] = { ['Increases "Ancient Circle" duration']={ -- vishap brais +1
+    [28124] = { ['"Ancient Circle" duration']={ -- vishap brais +1
         value=0.5,
         percent=true}},
-    [14227] = { ['Increases "Ancient Circle" duration']={ -- drachen brais
+    [14227] = { ['"Ancient Circle" duration']={ -- drachen brais
         value=0.5,
         percent=true}},
-    [15574] = { ['Increases "Ancient Circle" duration']={ -- drachen brais +1
+    [15574] = { ['"Ancient Circle" duration']={ -- drachen brais +1
         value=0.5,
         percent=true}},
-    [23046] = { ['Increases "Cover" duration']={ -- reverence coronet +2
-        value=9,
-        percent=false}},
-    [27690] = { ['Increases "Cover" duration']={ -- reverence coronet +1
-        value=9,
-        percent=false}},
-    [27669] = { ['Increases "Cover" duration']={ -- reverence coronet
-        value=7,
-        percent=false}},
-    [23381] = { ['Increases "Cover" duration']={ -- reverence coronet +3
-        value=10,
-        percent=false}},
-    [20728] = { ['Increases "8" duration']={ -- kheshig blade
-        value=8,
-        percent=false}},
-    [16604] = { ['Increases "5" duration']={ -- Save the Queen
-        value=5,
-        percent=false}},
-    [12515] = { ['Increases "Cover" duration']={ -- gallant coronet
-        value=5,
-        percent=false}},
-    [15231] = { ['Increases "Cover" duration']={ -- gallant coronet +1
-        value=5,
-        percent=false}},
-    [15251] = { ['Increases "Rampart" duration']={ -- valor coronet +1
-        value=15,
-        percent=false}},
-    [10656] = { ['Increases "Rampart" duration']={ -- valor coronet +2
-        value=30,
-        percent=false}},
-    [23069] = { ['Increases "Rampart" duration']={ -- caballarius coronet +2
-        value=30,
-        percent=false}},
-    [26637] = { ['Increases "Rampart" duration']={ -- caballarius coronet +1
-        value=30,
-        percent=false}},
-    [15078] = { ['Increases "Rampart" duration']={ -- valor coronet
-        value=15,
-        percent=false}},
-    [23404] = { ['Increases "Rampart" duration']={ -- caballarius coronet +3
-        value=30,
-        percent=false}},
-    [26636] = { ['Increases "Rampart" duration']={ -- caballarius coronet
-        value=30,
-        percent=false}},
-    [11084] = { ['Increases "Blood Rage" duration']={ -- ravager's lorica +2
-        value=30,
-        percent=false}},
-    [26899] = { ['Increases "Blood Rage" duration']={ -- boii lorica +1
-        value=34,
-        percent=false}},
-    [26898] = { ['Increases "Blood Rage" duration']={ -- boii lorica
-        value=32,
-        percent=false}},
-    [11184] = { ['Increases "Blood Rage" duration']={ -- ravager's lorica +1
-        value=15,
-        percent=false}},
-    [11120] = { ['Increases "Phantom Roll" duration']={ -- navarch's gants +2
-        value=40,
-        percent=false}},
-    [11220] = { ['Increases "Phantom Roll" duration']={ -- navarch's gants +1
-        value=20,
-        percent=false}},
-    [21482] = { ['Increases "Phantom Roll" duration']={ -- compensator
-        value=20,
-        percent=false}},
-    [26038] = { ['Increases "Phantom Roll" duration']={ -- regal necklace
-        value=20,
-        percent=false}},
-    [26262] = { ['Increases "Phantom Roll" duration']={ -- Camulus's mantle
-        value=30,
-        percent=false}},
-    [27084] = { ['Increases "Phantom Roll" duration']={ -- chasseur's gants
-        value=45,
-        percent=false}},
-    [27085] = { ['Increases "Phantom Roll" duration']={ -- chasseur's gants +1
-        value=50,
-        percent=false}}
+    [23046] = { ['"Cover" duration']={ -- reverence coronet +2
+        value=9}},
+    [27690] = { ['"Cover" duration']={ -- reverence coronet +1
+        value=9}},
+    [27669] = { ['"Cover" duration']={ -- reverence coronet
+        value=7}},
+    [23381] = { ['"Cover" duration']={ -- reverence coronet +3
+        value=10}},
+    [20728] = { ['"Cover" duration']={ -- kheshig blade
+        value=8}},
+    [16604] = { ['"Cover" duration']={ -- Save the Queen
+        value=5}},
+    [12515] = { ['"Cover" duration']={ -- gallant coronet
+        value=5}},
+    [15231] = { ['"Cover" duration']={ -- gallant coronet +1
+        value=5}},
+    [15251] = { ['"Rampart" duration']={ -- valor coronet +1
+        value=15}},
+    [10656] = { ['"Rampart" duration']={ -- valor coronet +2
+        value=30}},
+    [23069] = { ['"Rampart" duration']={ -- caballarius coronet +2
+        value=30}},
+    [26637] = { ['"Rampart" duration']={ -- caballarius coronet +1
+        value=30}},
+    [15078] = { ['"Rampart" duration']={ -- valor coronet
+        value=15}},
+    [23404] = { ['"Rampart" duration']={ -- caballarius coronet +3
+        value=30}},
+    [26636] = { ['"Rampart" duration']={ -- caballarius coronet
+        value=30}},
+    [11084] = { ['"Blood Rage" duration']={ -- ravager's lorica +2
+        value=30}},
+    [26899] = { ['"Blood Rage" duration']={ -- boii lorica +1
+        value=34}},
+    [26898] = { ['"Blood Rage" duration']={ -- boii lorica
+        value=32}},
+    [11184] = { ['"Blood Rage" duration']={ -- ravager's lorica +1
+        value=15}},
+    [11120] = { ['"Phantom Roll" duration']={ -- navarch's gants +2
+        value=40}},
+    [11220] = { ['"Phantom Roll" duration']={ -- navarch's gants +1
+        value=20}},
+    [21482] = { ['"Phantom Roll" duration']={ -- compensator
+        value=20}},
+    [26038] = { ['"Phantom Roll" duration']={ -- regal necklace
+        value=20}},
+    [26262] = { ['"Phantom Roll" duration']={ -- Camulus's mantle
+        value=30}},
+    [27084] = { ['"Phantom Roll" duration']={ -- chasseur's gants
+        value=45}},
+    [27085] = { ['"Phantom Roll" duration']={ -- chasseur's gants +1
+        value=50}}
+}
+
+dnc_modifiers = {
+	[10728] = {  -- etoile tights +2
+	    ["Jig duration"] = {
+	    value=35,
+	    percent=true}},
+	[11393] = {  -- dancer's toe shoes +1
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[11394] = {  -- dancer's toe shoes +1
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[15746] = {  -- dancer's toe shoes
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[15747] = {  -- dancer's toe shoes
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[16360] = {  -- etoile tights
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[16361] = {  -- etoile tights +1
+	    ["Jig duration"] = {
+	    value=25,
+	    percent=true}},
+	[23282] = {  -- horos tights +2
+	    ["Jig duration"] = {
+	    value=50,
+	    percent=true}},
+	[23326] = {  -- maxixi toe shoes +2
+	    ["Jig duration"] = {
+	    value=45,
+	    percent=true}},
+	[23327] = {  -- maxixi toe shoes +2
+	    ["Jig duration"] = {
+	    value=45,
+	    percent=true}},
+	[23617] = {  -- horos tights +3
+	    ["Jig duration"] = {
+	    value=50,
+	    percent=true}},
+	[23661] = {  -- maxixi toe shoes +3
+	    ["Jig duration"] = {
+	    value=50,
+	    percent=true}},
+	[23662] = {  -- maxixi toe shoes +3
+	    ["Jig duration"] = {
+	    value=50,
+	    percent=true}},
+	[27188] = {  -- horos tights
+	    ["Jig duration"] = {
+	    value=40,
+	    percent=true}},
+	[27189] = {  -- horos tights +1
+	    ["Jig duration"] = {
+	    value=45,
+	    percent=true}},
+	[28241] = {  -- maxixi toe shoes
+	    ["Jig duration"] = {
+	    value=35,
+	    percent=true}},
+	[28242] = {  -- maxixi toe shoes
+	    ["Jig duration"] = {
+	    value=35,
+	    percent=true}},
+	[28262] = {  -- maxixi toe shoes +1
+	    ["Jig duration"] = {
+	    value=40,
+	    percent=true}},
+	[28263] = {  -- maxixi toe shoes +1
+	    ["Jig duration"] = {
+	    value=40,
+	    percent=true}},
+	[11475] = {  -- dancer's tiara +1
+	    ["Samba duration"] = {
+	    value=30}},
+	[11476] = {  -- dancer's tiara +1
+	    ["Samba duration"] = {
+	    value=30}},
+	[16138] = {  -- dancer's tiara
+	    ["Samba duration"] = {
+	    value=30}},
+	[16139] = {  -- dancer's tiara
+	    ["Samba duration"] = {
+	    value=30}},
+	[23058] = {  -- maxixi tiara +2
+	    ["Samba duration"] = {
+	    value=45}},
+	[23059] = {  -- maxixi tiara +2
+	    ["Samba duration"] = {
+	    value=45}},
+	[23393] = {  -- maxixi tiara +3
+	    ["Samba duration"] = {
+	    value=45}},
+	[23394] = {  -- maxixi tiara +3
+	    ["Samba duration"] = {
+	    value=45}},
+	[26264] = {  -- Senuna's mantle
+	    ["Samba duration"] = {
+	    value=15}},
+	[27681] = {  -- maxixi tiara
+	    ["Samba duration"] = {
+	    value=40}},
+	[27682] = {  -- maxixi tiara
+	    ["Samba duration"] = {
+	    value=40}},
+	[27702] = {  -- maxixi tiara +1
+	    ["Samba duration"] = {
+	    value=45}},
+	[27703] = {  -- maxixi tiara +1
+	    ["Samba duration"] = {
+	    value=45}}
 }
 
 composure_gear = S{
