@@ -320,16 +320,12 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
 
     -- General Purpose
     for merit_title, index in pairs(job_ability_table) do
-        if index.trigger==ability.english then
+        if index.trigger == ability.english then
             local adjustment = index.initial and 1 or 0
-            duration_bonus = duration_bonus * (player.merits[merit_title:gsub(' ', '_'):lower()] - adjustment) * index.value
+            duration_bonus = duration_bonus + (player.merits[merit_title:gsub(' ', '_'):lower()] - adjustment) * index.value
         end
     end
 
-    -- Warrior
-        -- Tomahawk Duration
-    -- Monk
-        -- Formless Strikes
     -- White Mage
     -- Black Mage
     -- Red Mage
@@ -345,19 +341,19 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
 
     if ability.english == "Dragon Breaker" then
         -- +1 second per job point
-        duration_bonus = player.job_points.drg.dragon_breaker_effect or 0
+        duration_bonus = duration_bonus + player.job_points.drg.dragon_breaker_effect or 0
     end
 
     -- Summoner
     -- Blue Mage
     -- Corsair
     -- Puppetmaster
-    -- Dancer
     -- Scholar
     -- Geomancer
     -- Rune Fencer
 
     -- Equipment
+
     for _, item in ipairs(equipped_items) do
         local modifiers = ja_modifiers[item.id]
         if modifiers then
@@ -431,7 +427,7 @@ function calculate_roll_duration(player, ability, target, equipment, buffs)
         end
     end
 
-    local duration = (base_duration * duration_modifier) + duration_bonus
+    local duration = (base_duration + duration_bonus) * duration_modifier
 
     local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
@@ -447,36 +443,78 @@ function calculate_roll_duration(player, ability, target, equipment, buffs)
 end
 
 -- Dancer
-function calculate_dnc_duration(player, ability, target, equipment, buffs)
+function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
     if not (player or ability or target or equipment or buffs) then return end
     local current_time = socket.gettime()
     local equipped_items = fetch_equipped_items(equipment)
     local base_duration = (ability.duration or 0)
     local duration_bonus = 0
     local duration_modifier = 1
+    local new_buff_id = nil
 
     -- Merits and Job Points
-    if ability.type == 'Samba' then
-        duration_bonus = duration_bonus + player.job_points.dnc['Samba Duration'] * 2
-        duration_modifier = duration_modifier + (player.merits.saber_dance * 0.05)
+    if player.main_job == "DNC" then
+        if ability.type == 'Jig' then
+            duration_bonus = duration_bonus + player.job_points.dnc['Jig Duration'] * 1
+        elseif ability.type == 'Samba' then
+            duration_bonus = duration_bonus + player.job_points.dnc['Samba Duration'] * 2
+            -- Saber Dance
+            if buffs['Saber Dance'] then
+                duration_modifier = duration_modifier + (player.merits.saber_dance * 0.05)
+            end
+        elseif ability.type == 'Step' then
+            duration_bonus = duration_bonus + player.job_points.dnc['Step Duration'] * 1
+        end
     end
-
-    if ability.type == 'Jig' then
-        duration_bonus = duration_bonus + player.job_points.dnc['Jig Duration']
-    end
-    --   Job Points
 
     -- Equipment
     for _, item in ipairs(equipped_items) do
         local modifiers = ja_modifiers[item.id]
         if modifiers then
-            -- TODO: populate
-            -- Sambas (~12 items, flat bonus)
-            -- Jigs (~19 items, all % based)
+            for key, index in pairs(modifiers) do
+                if key:contains('"' .. ability.type .. '" duration') and
+                (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if index.percent == true then
+                        duration_modifier = duration_modifier + index.value
+                    else
+                        duration_bonus = duration_bonus + index.value
+                    end
+                end
+            end
         end
     end
 
-    local duration = (base_duration * duration_modifier) + duration_bonus
+    -- Jig modifier cap
+    if ability.type == 'Jig' then
+        if (duration_modifier > 1.5) then duration_modifier = 1.5 end
+    end
+
+    local duration = (base_duration + duration_bonus) * duration_modifier
+
+    -- Step duration cap
+    local step_pairs = {
+        ['Quickstep'] = 'Lethargic Daze',
+        ['Box Step'] = 'Sluggish Daze',
+        ['Stutter Step'] = 'Weakened Daze',
+        ['Feather Step'] = 'Bewildered Daze'
+    }
+
+    if ability.type == 'Step' and mob then
+        local mob = tracked_mobs[target.id]
+        if mob and mob:has_buffs() then
+            duration = duration - 30 -- Only initial strike lasts for 60 base seconds
+            for _, buff in pairs(mob.buffs) do
+                log(buff:get_buff_name())
+                if buff.buff.en:contains(step_pairs[ability.english]) then
+                    if (buff:get_remaining_duration_in_seconds() + duration) > (120 + duration_bonus) then
+                        duration = 120 + duration_bonus
+                    else
+                        duration = buff:get_remaining_duration_in_seconds() + duration
+                    end
+                end
+            end
+        end
+    end
 
     local duration_map = table.map(resist_state_modifiers,
         function(resist_multiplier)
@@ -490,7 +528,6 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs)
         return duration, modifiers
     end
 end
-
 
 -- Rune Fencer, which gets like 3 different types of things.. Ward, Effusion, Runes
 
@@ -657,21 +694,16 @@ function search_augments(equipped_items, query)
     return(T(found_augments))
 end
 
--- Merit point modifiers
-merit_points = {
-
-}
-
 -- This table will calculate at the time it is called, for the keys it is called
 conditions = {
     ['In Dynamis:'] = function(info, buffs)
         local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
-        local ffxi_info = windower.ffxi.get_info()
+        local ffxi_info = get_world_info()
         return dynamis_zones:contains(ffxi_info.zone)
     end,
     ['Assault:'] = function(info, buffs)
         local assault_zones = S{69,66,63,56,55,77}
-        local ffxi_info = windower.ffxi.get_info()
+        local ffxi_info = get_world_info()
         return assault_zones:contains(ffxi_info.zone)
     end,
     -- Conditions which expect an argument will need to be handled separately
@@ -679,15 +711,15 @@ conditions = {
         return buffs['Reive Mark']
     end,
     ['Nighttime:'] = function(info, buffs)
-        local ffxi_info = windower.ffxi.get_info()
+        local ffxi_info = get_world_info()
         return (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080)
     end,
     ['Dusk to Dawn:'] = function(info, buffs)
-        local ffxi_info = windower.ffxi.get_info()
+        local ffxi_info = get_world_info()
         return (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020)
     end,
     ['Daytime:'] = function(info, buffs)
-        local ffxi_info = windower.ffxi.get_info()
+        local ffxi_info = get_world_info()
         return (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
     end
     -- To be implemented
