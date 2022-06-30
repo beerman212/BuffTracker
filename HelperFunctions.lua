@@ -70,6 +70,8 @@ function calculate_enhancing_duration(player, spell, target, equipment, buffs)
         composure_modifier = composure_modifier + (composure_modifiers[composure_count] or 0)
     end
 
+    -- TODO: Implement RUN Embolden. Be sure to account for Evasionist's Cape aug (variable)
+
     local enhancing_duration = base_duration + duration_bonus
 
     for _, modifier in ipairs({duration_modifier, augment_duration_modifier, perpetuance_modifier, embolden_modifier}) do
@@ -450,7 +452,6 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
     local base_duration = (ability.duration or 0)
     local duration_bonus = 0
     local duration_modifier = 1
-    local new_buff_id = nil
 
     -- Merits and Job Points
     if player.main_job == "DNC" then
@@ -502,10 +503,9 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
     if ability.type == 'Step' and mob then
         local mob = tracked_mobs[target.id]
         if mob and mob:has_buffs() then
-            duration = duration - 30 -- Only initial strike lasts for 60 base seconds
             for _, buff in pairs(mob.buffs) do
-                log(buff:get_buff_name())
-                if buff.buff.en:contains(step_pairs[ability.english]) then
+                if buff:get_buff_name():contains(step_pairs[ability.english]) then
+                    duration = duration - 30 -- Only initial strike lasts for 60 base seconds
                     if (buff:get_remaining_duration_in_seconds() + duration) > (120 + duration_bonus) then
                         duration = 120 + duration_bonus
                     else
@@ -529,7 +529,165 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
     end
 end
 
--- Rune Fencer, which gets like 3 different types of things.. Ward, Effusion, Runes
+-- Rune Fencer
+function calculate_run_duration(player, ability, target, equipment, buffs)
+    if not (player or ability or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+    local equipped_items = fetch_equipped_items(equipment)
+    local base_duration = (ability.duration or 0)
+    local duration_bonus = 0
+    local duration_modifier = 1
+
+    local rune_list = S{
+        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux'
+    }
+
+    if player.main_job == 'RUN' then
+        -- Merit points
+        if ability.english == 'Rayke' then
+            duration_bonus = duration_bonus + ((player.merits.rayke -1) * 3)
+        -- Job Points
+        elseif ability.english == 'Vallation' or ability.english == 'Valiance' then
+            duration_bonus = duration_bonus + player.job_points.run['Vallation Duration']
+        elseif player.job_points.run[ability.english .. ' Effect Duration'] then
+            duration_bonus = player.job_points.run[ability.english .. ' Effect Duration']
+        end
+    end
+
+    duration_bonus = duration_bonus + player.job_points.run[ability.english]
+
+    -- Dislodge oldest rune if maximum already reached
+    if ability.type == 'Rune' then
+        local num_runes = 0
+        local oldest_rune_id  = nil
+        local oldest_rune_duration = 300
+        for _, buff in pairs(buffs) do
+            if rune_list:contains(buff:get_buff_name()) then 
+                num_runes = num_runes + 1
+                if buff:get_remaining_duration_in_seconds() < oldest_rune_duration then
+                    oldest_rune_id = buff:get_buff_id()
+                end
+            end
+        end
+        if num_runes == 3 then
+            for _, buff in pairs(buffs) do
+                if buff:get_buff_id() == oldest_rune_id then buff:expire() end
+            end
+        end
+    end
+
+    -- Consume newest rune with Swipe
+    if ability.english == 'Swipe' then
+        local num_runes = 0
+        local newest_rune_id  = nil
+        local newest_rune_duration = 0
+        for _, buff in pairs(buffs) do
+            if rune_list:contains(buff:get_buff_name()) then 
+                num_runes = num_runes + 1
+                if buff:get_remaining_duration_in_seconds() > newest_rune_duration then
+                    newest_rune_id = buff:get_buff_id()
+                end
+            end
+        end
+        for _, buff in pairs(buffs) do
+            if buff:get_buff_id() == newest_rune_id then buff:expire() end
+        end
+    end
+
+    -- Consume all runes with Lunge, Gambit, Rayke...
+    if ability.english == 'Lunge' or ability.english == 'Gambit' or ability.english == 'Rayke' then
+        for _, buff in pairs(buffs) do
+            if rune_list:contains(buff:get_buff_name()) then 
+                buff:expire()
+            end
+        end
+    end
+
+    -- Equipment
+    for _, item in ipairs(equipped_items) do
+        local modifiers = ja_modifiers[item.id]
+        if modifiers then
+            for key, index in pairs(modifiers) do
+                if key:contains('"' .. ability.type .. '" duration') and
+                (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if index.percent == true then
+                        duration_modifier = duration_modifier + index.value
+                    else
+                        duration_bonus = duration_bonus + index.value
+                    end
+                end
+            end
+        end
+    end
+
+
+    local duration = (base_duration + duration_bonus) * duration_modifier
+
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
+
+    if ability.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if ability.targets == 1 then
+        return duration, modifiers
+    end
+    -- Swipe consumes the newest rune (longest duration)
+    -- Lunge consumes all runes
+
+    -- If 3 runes already exist, the oldest one is pushed out
+end
+
+--[[ Generic stub for future calculators
+function calculate_category_duration(player, ability, target, equipment, buffs)
+    if not (player or ability or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+    local equipped_items = fetch_equipped_items(equipment)
+    local base_duration = (ability.duration or 0)
+    local duration_bonus = 0
+    local duration_modifier = 1
+
+    -- Merits and Job Points
+    if player.main_job == "FOO" then
+        player.job_points.charlie['bar']
+        player.merits.alice_bob
+    end
+
+    -- Equipment
+    for _, item in ipairs(equipped_items) do
+        local modifiers = ja_modifiers[item.id]
+        if modifiers then
+            for key, index in pairs(modifiers) do
+                if key:contains('"' .. ability.type .. '" duration') and
+                (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
+                    if index.percent == true then
+                        duration_modifier = duration_modifier + index.value
+                    else
+                        duration_bonus = duration_bonus + index.value
+                    end
+                end
+            end
+        end
+    end
+
+
+    local duration = (base_duration + duration_bonus) * duration_modifier
+
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
+
+    if ability.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if ability.targets == 1 then
+        return duration, modifiers
+    end
+end
+]]
 
 function get_base_saboteur_modifier(spell, target, buffs, nm_table)
     local saboteur_modifier = 1
