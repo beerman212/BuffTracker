@@ -322,7 +322,7 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
 
     -- General Purpose
     for merit_title, index in pairs(job_ability_table) do
-        if index.trigger == ability.english then
+        if index.trigger == ability.english and player.merits[merit_title:gsub(' ', '_'):lower()] then
             local adjustment = index.initial and 1 or 0
             duration_bonus = duration_bonus + (player.merits[merit_title:gsub(' ', '_'):lower()] - adjustment) * index.value
         end
@@ -454,15 +454,15 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs)
     -- Merits and Job Points
     if player.main_job == "DNC" then
         if ability.type == 'Jig' then
-            duration_bonus = duration_bonus + player.job_points.dnc['Jig Duration'] * 1
+            duration_bonus = duration_bonus + (player.job_points.dnc['Jig Duration'] or 0) * 1
         elseif ability.type == 'Samba' then
-            duration_bonus = duration_bonus + player.job_points.dnc['Samba Duration'] * 2
+            duration_bonus = duration_bonus + (player.job_points.dnc['Samba Duration'] or 0) * 2
             -- Saber Dance
             if buffs['Saber Dance'] then
-                duration_modifier = duration_modifier + (player.merits.saber_dance * 0.05)
+                duration_modifier = duration_modifier + (player.merits.saber_dance or 0) * 0.05
             end
         elseif ability.type == 'Step' then
-            duration_bonus = duration_bonus + player.job_points.dnc['Step Duration'] * 1
+            duration_bonus = duration_bonus + (player.job_points.dnc['Step Duration'] or 0) * 1
         end
     end
 
@@ -547,9 +547,9 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
             duration_bonus = duration_bonus + ((player.merits.rayke -1) * 3)
         -- Job Points
         elseif ability.english == 'Vallation' or ability.english == 'Valiance' then
-            duration_bonus = duration_bonus + player.job_points.run['Vallation Duration']
+            duration_bonus = duration_bonus + (player.job_points.run['Vallation Duration'] or 0)
         elseif player.job_points.run[ability.english .. ' Effect Duration'] then
-            duration_bonus = player.job_points.run[ability.english .. ' Effect Duration']
+            duration_bonus = (player.job_points.run[ability.english .. ' Effect Duration'] or 0)
         end
     end
 
@@ -586,45 +586,22 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
         end
     end
 
-    -- Consume newest rune with Swipe
-    -- Doesn't seem to be a spell?
-    if ability.english == 'Swipe' then
-        local num_runes = 0
-        local newest_rune_id = nil
-        local newest_rune_name = nil
-        local newest_rune_duration = 0
-        for _, buff in pairs(buffs) do
+    -- Consume all runes with Gambit and Rayke
+    if ability.english == 'Gambit' or ability.english == 'Rayke' then
+        player_buffs = tracked_mobs[player.id].buffs
+        for _, buff in pairs(player_buffs) do
             if rune_list:contains(buff:get_buff_name()) then 
-                num_runes = num_runes + 1
-                if buff:get_remaining_duration_in_seconds() > newest_rune_duration then
-                    newest_rune_id = buff:get_buff_id()
-                    newest_rune_name = buff:get_buff_name():lower()
-                    newest_rune_duration = buff:get_remaining_duration_in_seconds()
-                end
-            end
-        end
-        for _, buff in pairs(buffs) do
-            if buff:get_buff_id() == newest_rune_id and buffs[newest_rune_name] == 1 then 
                 tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
-            end
-        end
-    end
-
-    -- Consume all runes with Lunge, Gambit, Rayke...
-    if ability.english == 'Lunge' or ability.english == 'Gambit' or ability.english == 'Rayke' then
-        for _, buff in pairs(buffs) do
-            if rune_list:contains(buff:get_buff_name()) then 
-                buff:expire()
             end
         end
     end
 
     -- Equipment
     for _, item in ipairs(equipped_items) do
-        local modifiers = ja_modifiers[item.id]
+        local modifiers = run_modifiers[item.id]
         if modifiers then
             for key, index in pairs(modifiers) do
-                if key:contains('"' .. ability.type .. '" duration') and
+                if key:contains('"' .. ability.english .. '" duration') and
                 (not index.condition) or (index.condition and conditions[index.condition](get_world_info(), buffs)) then
                     if index.percent == true then
                         duration_modifier = duration_modifier + index.value
@@ -650,10 +627,55 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
         -- if ability.targets == 1 then
         return duration, modifiers
     end
-    -- Swipe consumes the newest rune (longest duration)
-    -- Lunge consumes all runes
+end
 
-    -- If 3 runes already exist, the oldest one is pushed out
+-- Note: This covers Swipe and Lunge specifically
+function run_effusion(player, ability)
+    local buffs = get_player_buffs()
+    local player_buffs = nil
+    if tracked_mobs[player.id] then
+        player_buffs = tracked_mobs[player.id].buffs
+    end
+
+    local rune_list = T{
+        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux', 'Tenebrae'
+    }
+
+    if tracked_mobs[player.id] then
+        player_buffs = tracked_mobs[player.id].buffs
+    end
+
+    if ability.english == 'Swipe' then
+        local num_runes = 0
+        local newest_rune_id = nil
+        local newest_rune_name = nil
+        local newest_rune_duration = 0
+        for _, buff in pairs(player_buffs) do
+
+            if rune_list:contains(buff:get_buff_name()) then 
+                num_runes = num_runes + 1
+                if buff:get_remaining_duration_in_seconds() > newest_rune_duration then
+                    newest_rune_id = buff:get_buff_id()
+                    newest_rune_name = buff:get_buff_name():lower()
+                    newest_rune_duration = buff:get_remaining_duration_in_seconds()
+                end
+            end
+        end
+        for _, buff in pairs(player_buffs) do
+            if buff:get_buff_id() == newest_rune_id and buffs[newest_rune_name] == 1 then 
+                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
+            end
+        end
+    end
+
+    if ability.english == 'Lunge' then
+        for _, buff in pairs(player_buffs) do
+            -- Expire all runes
+            if rune_list:contains(buff:get_buff_name()) then 
+                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
+            end
+        end
+    end
 end
 
 --[[ Generic stub for future calculators

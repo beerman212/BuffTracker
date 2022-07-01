@@ -6,6 +6,12 @@ function action_handler(action)
     local player = windower.ffxi.get_player()
     local spell = actionpacket:get_spell()
     if not spell then return end
+
+    -- Rune Fencer's Swipe and Lunge abilities do not have duration but can consume runes
+    if spell.english == 'Lunge' or spell.english == 'Swipe' then
+        run_effusion(player, spell)
+    end
+
     if not spell.duration then return end
     local type = spell.type
 

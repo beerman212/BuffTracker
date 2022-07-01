@@ -745,25 +745,33 @@ dnc_modifiers = {
 run_modifiers = {
 	[21698] = { ['"Liement" duration']={  -- bidenhander
 	    value=3}},
-	[23129] = { ['"Vallation" duration']={  -- runeist's coat +2
+	[23129] = { ['"Valiance" duration']={  -- runeist's coat +2
+        value=17},
+        ['"Vallation" duration']={  
 	    value=17}},
 	[23151] = { ['"Liement" duration']={  -- futhark coat +2
 	    value=4}},
 	[23196] = { ['"Gambit" duration']={  -- runeist's mitons +2
 	    value=14}},
-	[23464] = { ['"Vallation" duration']={  -- runeist's coat +3
+	[23464] = { ['"Valiance" duration']={  -- runeist coat +3
+        value=19},
+        ['"Vallation" duration']={ 
 	    value=19}},
 	[23486] = { ['"Liement" duration']={  -- futhark coat +3
 	    value=5}},
 	[23531] = { ['"Gambit" duration']={  -- runeist's mitons +3
 	    value=16}},
 	[26267] = { ['"Valiance" duration']={  -- Ogma's cape
+        value=15},
+        ['"Vallation" duration']={
 	    value=15}},
 	[26842] = { ['"Liement" duration']={  -- futhark coat
 	    value=2}},
 	[26843] = { ['"Liement" duration']={  -- futhark coat +1
 	    value=3}},
-	[27850] = { ['"Vallation" duration']={  -- runeist coat +1
+	[27850] = { ['"Valiance" duration']={  -- runeist coat +1
+        value=15},
+        ['"Vallation" duration']={ 
 	    value=15}},
 	[27986] = { ['"Gambit" duration']={  -- runeist mitons +1
 	    value=12}},
