@@ -137,7 +137,9 @@ function action_handler(action)
 
             end
         end
-    elseif type == 'JobAbility' or type == 'CorsairRoll' or type == 'Jig' or type == 'Samba' or type == 'Step' then
+    elseif type == 'JobAbility' or type == 'CorsairRoll'
+        or type == 'Jig' or type == 'Samba' or type == 'Step'
+        or type == 'Rune' or type == 'Ward' or type == 'Effusion' then
         local actor_id = actionpacket:get_id()
         if actor_id == player.id then
             local equipment = windower.ffxi.get_items('equipment')
@@ -153,11 +155,7 @@ function action_handler(action)
                 else
                     local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
                     
-                    if type == 'Step' and tracked_mobs[target.id] then
-                        tracked_buff:calculate_step_duration(tracked_mobs[target.id])
-                    else
-                        tracked_buff:calculate_buff_duration()
-                    end
+                    tracked_buff:calculate_buff_duration()
 
                     if not tracked_mobs[target.id] then
                         tracked_mobs[target.id] = TrackedMob.new(target)

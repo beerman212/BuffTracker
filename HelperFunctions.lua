@@ -348,11 +348,9 @@ function calculate_ja_duration(player, ability, target, equipment, buffs)
 
     -- Summoner
     -- Blue Mage
-    -- Corsair
     -- Puppetmaster
     -- Scholar
     -- Geomancer
-    -- Rune Fencer
 
     -- Equipment
 
@@ -445,7 +443,7 @@ function calculate_roll_duration(player, ability, target, equipment, buffs)
 end
 
 -- Dancer
-function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
+function calculate_dnc_duration(player, ability, target, equipment, buffs)
     if not (player or ability or target or equipment or buffs) then return end
     local current_time = socket.gettime()
     local equipped_items = fetch_equipped_items(equipment)
@@ -500,7 +498,7 @@ function calculate_dnc_duration(player, ability, target, equipment, buffs, mob)
         ['Feather Step'] = 'Bewildered Daze'
     }
 
-    if ability.type == 'Step' and mob then
+    if ability.type == 'Step' then
         local mob = tracked_mobs[target.id]
         if mob and mob:has_buffs() then
             for _, buff in pairs(mob.buffs) do
@@ -537,9 +535,10 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
     local base_duration = (ability.duration or 0)
     local duration_bonus = 0
     local duration_modifier = 1
+    local player_buffs = nil
 
-    local rune_list = S{
-        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux'
+    local rune_list = T{
+        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux', 'Tenebrae'
     }
 
     if player.main_job == 'RUN' then
@@ -554,43 +553,60 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
         end
     end
 
-    duration_bonus = duration_bonus + player.job_points.run[ability.english]
-
     -- Dislodge oldest rune if maximum already reached
     if ability.type == 'Rune' then
         local num_runes = 0
         local oldest_rune_id  = nil
         local oldest_rune_duration = 300
-        for _, buff in pairs(buffs) do
-            if rune_list:contains(buff:get_buff_name()) then 
-                num_runes = num_runes + 1
-                if buff:get_remaining_duration_in_seconds() < oldest_rune_duration then
-                    oldest_rune_id = buff:get_buff_id()
+
+        for _, rune_name in ipairs(rune_list) do
+            num_runes = num_runes + (buffs[rune_name:lower()] or 0)
+        end
+
+        if tracked_mobs[player.id] then
+            player_buffs = tracked_mobs[player.id].buffs
+
+            for _, buff in pairs(player_buffs) do
+                if rune_list:contains(buff:get_buff_name()) then
+                    if buff:get_remaining_duration_in_seconds() < oldest_rune_duration then
+                        oldest_rune_id = buff:get_buff_id()
+                        oldest_rune_duration = buff:get_remaining_duration_in_seconds()
+                        oldest_rune_name = buff:get_buff_name():lower()
+                    end
                 end
             end
-        end
-        if num_runes == 3 then
-            for _, buff in pairs(buffs) do
-                if buff:get_buff_id() == oldest_rune_id then buff:expire() end
+            if num_runes == 3 then
+                for _, buff in pairs(player_buffs) do
+                    if buff:get_buff_id() == oldest_rune_id and buffs[oldest_rune_name] == 1 then 
+                        -- buff:expire() should work here but doesn't for some reason
+                        tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil 
+                    end
+                end
             end
         end
     end
 
     -- Consume newest rune with Swipe
+    -- Doesn't seem to be a spell?
     if ability.english == 'Swipe' then
         local num_runes = 0
-        local newest_rune_id  = nil
+        local newest_rune_id = nil
+        local newest_rune_name = nil
         local newest_rune_duration = 0
         for _, buff in pairs(buffs) do
             if rune_list:contains(buff:get_buff_name()) then 
                 num_runes = num_runes + 1
                 if buff:get_remaining_duration_in_seconds() > newest_rune_duration then
                     newest_rune_id = buff:get_buff_id()
+                    newest_rune_name = buff:get_buff_name():lower()
+                    newest_rune_duration = buff:get_remaining_duration_in_seconds()
                 end
             end
         end
         for _, buff in pairs(buffs) do
-            if buff:get_buff_id() == newest_rune_id then buff:expire() end
+            if buff:get_buff_id() == newest_rune_id and buffs[newest_rune_name] == 1 then 
+                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
+            end
         end
     end
 
