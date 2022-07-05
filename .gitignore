@@ -40,3 +40,5 @@ luac.out
 *.hex
 
 auto_comment.ods
+*.log
+data/logger.log

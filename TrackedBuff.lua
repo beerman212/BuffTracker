@@ -30,7 +30,7 @@ function TrackedBuff.new(buff, spell, caster, target, equipment, time_applied)
 end
 
 function TrackedBuff.equals(buff, other_buff)
-    return buff.buff.id == other_buff.buff.id
+        return buff:get_buff_id() == other_buff:get_buff_id()
 end
 
 function TrackedBuff:expire()
@@ -296,4 +296,16 @@ function TrackedBuff:print_log(verbose)
             windower.add_to_chat(80, mod_info:concat(', '))
         end
     end
+end
+
+function TrackedBuff:flog(filename)
+    local log_data = T{
+        b = self:get_buff_id(),
+        s = self:get_spell_id(),
+        a = {},
+        e = self.equipment.unpacked,
+        t = {},
+    }
+
+    flog(filename or logfilename, table.tostring(log_data))
 end

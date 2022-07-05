@@ -5,6 +5,7 @@ function action_handler(action)
     local category = actionpacket:get_category_string()
     local player = windower.ffxi.get_player()
     local spell = actionpacket:get_spell()
+
     if not spell then return end
     if not spell.duration then return end
     local type = spell.type
@@ -68,6 +69,7 @@ function action_handler(action)
                 local equipment = windower.ffxi.get_items('equipment')
 
                 for target in actionpacket:get_targets() do
+                    
                     local action = target:get_actions()()
                     local message_id = action:get_message_id()
 
@@ -130,6 +132,11 @@ function action_handler(action)
                             end
 
                             tracked_mobs[target.id]:add_buff(tracked_buff)
+
+                            --tracked_buff:print_log(true)
+                            --flog(logfilename, table.tovstring(tracked_buff))
+                            --flog(logfilename, table.tovstring(get_equipment_info(tracked_buff.equipment)))
+
                         end
                     end
                 end
@@ -138,6 +145,7 @@ function action_handler(action)
             end
         end
     elseif type == 'JobAbility' or type == 'CorsairRoll' or type == 'Jig' or type == 'Samba' or type == 'Step' then
+        windower.add_to_chat(123, "What??!!")
         local actor_id = actionpacket:get_id()
         if actor_id == player.id then
             local equipment = windower.ffxi.get_items('equipment')
@@ -166,6 +174,33 @@ function action_handler(action)
                 end
             end
         end
+    elseif category == "job_ability" then
+        local actor_id = actionpacket:get_id()
+
+        if actor_id == player.id then
+            local equipment = windower.ffxi.get_items("equipment")
+            local time_cast = socket.gettime()
+            local buff = res.buffs[spell.status]
+
+            for target in actionpacket:get_targets() do
+                local action = target:get_actions()()
+                local message_id = action:get_message_id()
+
+                if spell.type == "Rune" then
+                    local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                    tracked_buff.calculated_duration = 300
+                    tracked_buff:print_log()
+
+                    if not tracked_mobs[target.id] then
+                        tracked_mobs[target.id] = TrackedMob.new(target)
+                    end
+
+                    tracked_mobs[target.id]:add_rune_buff(tracked_buff)
+                end
+            end
+        end
+    elseif category == "job_ability_run" then
+        
     end
 end
 

@@ -1,4 +1,4 @@
 return{
     immunities = T{},
-    NMs = L{}
+    NMs = L{"Tococo"}
 }
