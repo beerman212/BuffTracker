@@ -890,54 +890,29 @@ function search_augments(equipped_items, query)
     return(T(found_augments))
 end
 
--- This table will calculate at the time it is called, for the keys it is called
-conditions = {
-    ['In Dynamis:'] = function(info, buffs)
-        local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
-        local ffxi_info = get_world_info()
-        return dynamis_zones:contains(ffxi_info.zone)
-    end,
-    ['Assault:'] = function(info, buffs)
-        local assault_zones = S{69,66,63,56,55,77}
-        local ffxi_info = get_world_info()
-        return assault_zones:contains(ffxi_info.zone)
-    end,
-    -- Conditions which expect an argument will need to be handled separately
-    ['Reives:'] = function(info, buffs) 
-        return buffs['Reive Mark']
-    end,
-    ['Nighttime:'] = function(info, buffs)
-        local ffxi_info = get_world_info()
-        return (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080)
-    end,
-    ['Dusk to Dawn:'] = function(info, buffs)
-        local ffxi_info = get_world_info()
-        return (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020)
-    end,
-    ['Daytime:'] = function(info, buffs)
-        local ffxi_info = get_world_info()
-        return (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
-    end
-    -- To be implemented
-    -- Set:
-    -- Days of the week; firesday = 0
-    -- Weather:
-    -- Moon phase
-    -- vs enemy types
-    -- Citizenship
-    -- Nation control
-    -- Latent Effect:
-    -- Poison:
-    -- Paralysis:
-    -- Besieged:
-    -- Salvage:
-    -- Unity Ranking:
-}
+function unpack_equipment_inf0(equipment)
+    if not equipment then return end
 
-function get_world_info()
-    local info = cache.get_info
-    if not info then
-        info = windower.ffxi.get_info()
-        cache.get_info = info       
+    local equip_info = T{}
+
+    for _, slot in ipairs(equip_slots) do
+        local item = windower.ffxi.get_items(equipment[slot .. "_bag"], equipment[slot])
+
+        if item and item.extdata then
+            local extdata_unpacked = extdata.decode(item)
+            item.extdata_unpacked = extdata_unpacked.type == "Augmented Equipment" and extdata_unpacked
+        end
+
+        if item then
+            
+            equip_info:append({
+                i = item.id,
+                a = item.extdata_unpacked and table.filter(item.extdata_unpacked.augments, (function(augment) return augment ~= "none" end)) or nil
+            })
+        end
     end
+
+    equipment.unpacked = equip_info
+
+    return equipment
 end

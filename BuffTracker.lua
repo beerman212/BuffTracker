@@ -46,3 +46,5 @@ defaults.duration = {}
 settings = config.load(defaults)
 maintargetbox = texts.new("Main Target", settings)
 maintargetbox:show()
+
+logfilename = "data/logger.log"
