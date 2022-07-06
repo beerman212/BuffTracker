@@ -13,7 +13,6 @@ function action_handler(action)
         run_effusion(player, spell)
     end
 
-    if not spell.duration then return end
     local type = spell.type
 
     if category == 'spell_finish' then
@@ -151,8 +150,8 @@ function action_handler(action)
             end
         end
     elseif type == 'JobAbility' or type == 'CorsairRoll'
-        or type == 'Jig' or type == 'Samba' or type == 'Step'
-        or type == 'Rune' or type == 'Ward' or type == 'Effusion' then
+        or type == 'Jig' or type == 'Samba' or type == 'Step' 
+        or category == 'job_ability_run' or type == 'Rune' then
         local actor_id = actionpacket:get_id()
         if actor_id == player.id then
             local equipment = windower.ffxi.get_items('equipment')
@@ -167,13 +166,18 @@ function action_handler(action)
                     -- Do nothing
                 else
                     local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
-                    
-                    tracked_buff:calculate_buff_duration()
 
                     if not tracked_mobs[target.id] then
                         tracked_mobs[target.id] = TrackedMob.new(target)
                     end
-                    tracked_mobs[target.id]:add_buff(tracked_buff)
+
+                    if spell.type == "Rune" then
+                        tracked_buff.calculated_duration = 300
+                        tracked_mobs[target.id]:add_rune_buff(tracked_buff)
+                    else
+                        tracked_buff:calculate_buff_duration()
+                        tracked_mobs[target.id]:add_buff(tracked_buff)
+                    end
                 end
             end
         end
@@ -189,21 +193,9 @@ function action_handler(action)
                 local action = target:get_actions()()
                 local message_id = action:get_message_id()
 
-                if spell.type == "Rune" then
-                    local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
-                    tracked_buff.calculated_duration = 300
-                    tracked_buff:print_log()
-
-                    if not tracked_mobs[target.id] then
-                        tracked_mobs[target.id] = TrackedMob.new(target)
-                    end
-
-                    tracked_mobs[target.id]:add_rune_buff(tracked_buff)
-                end
+                
             end
         end
-    elseif category == "job_ability_run" then
-        
     end
 end
 

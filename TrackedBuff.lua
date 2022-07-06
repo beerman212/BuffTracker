@@ -232,7 +232,7 @@ function TrackedBuff:calculate_buff_duration()
             duration, modifiers = calculate_roll_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         elseif type == 'Jig' or type == 'Samba' or type == 'Step' then
             duration, modifiers = calculate_dnc_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
-        elseif type == 'Rune' or type == 'Ward' or type == 'Effusion' then
+        elseif type == 'Ward' or type == 'Effusion' then
             duration, modifiers = calculate_run_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         end
         if duration then

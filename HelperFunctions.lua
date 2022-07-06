@@ -537,9 +537,8 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
     local duration_modifier = 1
     local player_buffs = nil
 
-    local rune_list = T{
-        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux', 'Tenebrae'
-    }
+    local rune_buff_ids = S{523, 524, 525, 526, 527, 528, 529, 530}
+    local current_runes = T(tracked_mobs[player.id].buffs:filter(function(buff) return rune_buff_ids:contains(buff:get_buff_id()) end))
 
     if player.main_job == 'RUN' then
         -- Merit points
@@ -553,47 +552,22 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
         end
     end
 
-    -- Dislodge oldest rune if maximum already reached
-    if ability.type == 'Rune' then
-        local num_runes = 0
-        local oldest_rune_id  = nil
-        local oldest_rune_duration = 300
-
-        for _, rune_name in ipairs(rune_list) do
-            num_runes = num_runes + (buffs[rune_name:lower()] or 0)
-        end
-
-        if tracked_mobs[player.id] then
-            player_buffs = tracked_mobs[player.id].buffs
-
-            for _, buff in pairs(player_buffs) do
-                if rune_list:contains(buff:get_buff_name()) then
-                    if buff:get_remaining_duration_in_seconds() < oldest_rune_duration then
-                        oldest_rune_id = buff:get_buff_id()
-                        oldest_rune_duration = buff:get_remaining_duration_in_seconds()
-                        oldest_rune_name = buff:get_buff_name():lower()
-                    end
-                end
-            end
-            if num_runes == 3 then
-                for _, buff in pairs(player_buffs) do
-                    if buff:get_buff_id() == oldest_rune_id and buffs[oldest_rune_name] == 1 then 
-                        -- buff:expire() should work here but doesn't for some reason
-                        tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil 
-                    end
-                end
-            end
-        end
-    end
-
     -- Consume all runes with Gambit and Rayke
     if ability.english == 'Gambit' or ability.english == 'Rayke' then
-        player_buffs = tracked_mobs[player.id].buffs
-        for _, buff in pairs(player_buffs) do
-            if rune_list:contains(buff:get_buff_name()) then 
-                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
+        local buffs_to_be_removed = T{}
+        if tracked_mobs[player.id]:has_buffs() then
+            for _, buff in pairs(tracked_mobs[player.id].buffs) do
+                if(rune_buff_ids:contains(buff:get_buff_id())) then
+                    tracked_mobs[player.id]:remove_buff(buff:get_buff_id(), buff:get_spell_id())
+                    --table.insert(buffs_to_be_removed, {buff_id = buff:get_buff_id(), spell_id = buff:get_spell_id()})
+                end
             end
         end
+        --[[
+        for index, attribute in ipairs(buffs_to_be_removed) do
+            tracked_mobs[player.id]:remove_buff(attribute.buff_id, attribute.spell_id)
+        end
+        ]]
     end
 
     -- Equipment
