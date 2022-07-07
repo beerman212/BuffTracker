@@ -8,10 +8,13 @@ function action_handler(action)
 
     if not spell then return end
 
-    -- Rune Fencer's Swipe and Lunge abilities do not have duration but can consume runes
+    -- Rune Fencer's Swipe and Lunge abilities do not have duration but can consume runes. Other similar
+    -- abilities should go above the duration check as well
     if spell.english == 'Lunge' or spell.english == 'Swipe' then
-        run_effusion(player, spell)
+        effusion(player, spell)
     end
+
+    if not spell.duration then return end
 
     local type = spell.type
 
@@ -172,8 +175,8 @@ function action_handler(action)
                     end
 
                     if spell.type == "Rune" then
-                        tracked_buff.calculated_duration = 300
-                        tracked_mobs[target.id]:add_rune_buff(tracked_buff)
+                        tracked_buff.calculated_duration = spell.duration
+                        tracked_mobs[target.id]:add_rune_buff(player, tracked_buff)
                     else
                         tracked_buff:calculate_buff_duration()
                         tracked_mobs[target.id]:add_buff(tracked_buff)

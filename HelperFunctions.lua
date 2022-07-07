@@ -554,20 +554,11 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
 
     -- Consume all runes with Gambit and Rayke
     if ability.english == 'Gambit' or ability.english == 'Rayke' then
-        local buffs_to_be_removed = T{}
-        if tracked_mobs[player.id]:has_buffs() then
-            for _, buff in pairs(tracked_mobs[player.id].buffs) do
-                if(rune_buff_ids:contains(buff:get_buff_id())) then
-                    tracked_mobs[player.id]:remove_buff(buff:get_buff_id(), buff:get_spell_id())
-                    --table.insert(buffs_to_be_removed, {buff_id = buff:get_buff_id(), spell_id = buff:get_spell_id()})
-                end
+        for _, buff in pairs(current_runes) do
+            if(rune_buff_ids:contains(buff:get_buff_id())) then
+                tracked_mobs[player.id]:remove_buff(buff:get_buff_id(), buff:get_spell_id())
             end
         end
-        --[[
-        for index, attribute in ipairs(buffs_to_be_removed) do
-            tracked_mobs[player.id]:remove_buff(attribute.buff_id, attribute.spell_id)
-        end
-        ]]
     end
 
     -- Equipment
@@ -604,49 +595,17 @@ function calculate_run_duration(player, ability, target, equipment, buffs)
 end
 
 -- Note: This covers Swipe and Lunge specifically
-function run_effusion(player, ability)
-    local buffs = get_player_buffs()
-    local player_buffs = nil
-    if tracked_mobs[player.id] then
-        player_buffs = tracked_mobs[player.id].buffs
-    end
-
-    local rune_list = T{
-        'Ignis', 'Gelus', 'Flabra', 'Tellus', 'Sulpor', 'Unda', 'Lux', 'Tenebrae'
-    }
-
-    if tracked_mobs[player.id] then
-        player_buffs = tracked_mobs[player.id].buffs
-    end
+function effusion(player, ability)
+    local rune_buff_ids = S{523, 524, 525, 526, 527, 528, 529, 530}
+    local current_runes = T(tracked_mobs[player.id].buffs:filter(function(buff) return rune_buff_ids:contains(buff:get_buff_id()) end))
 
     if ability.english == 'Swipe' then
-        local num_runes = 0
-        local newest_rune_id = nil
-        local newest_rune_name = nil
-        local newest_rune_duration = 0
-        for _, buff in pairs(player_buffs) do
-
-            if rune_list:contains(buff:get_buff_name()) then 
-                num_runes = num_runes + 1
-                if buff:get_remaining_duration_in_seconds() > newest_rune_duration then
-                    newest_rune_id = buff:get_buff_id()
-                    newest_rune_name = buff:get_buff_name():lower()
-                    newest_rune_duration = buff:get_remaining_duration_in_seconds()
-                end
-            end
-        end
-        for _, buff in pairs(player_buffs) do
-            if buff:get_buff_id() == newest_rune_id and buffs[newest_rune_name] == 1 then 
-                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
-            end
-        end
-    end
-
-    if ability.english == 'Lunge' then
-        for _, buff in pairs(player_buffs) do
-            -- Expire all runes
-            if rune_list:contains(buff:get_buff_name()) then 
-                tracked_mobs[player.id].buffs[buff:get_buff_id()] = nil
+        -- TODO: Replace with the 'remove newest' function once implemented
+        tracked_mobs[player.id]:subtract_rune_buff()
+    else -- Lunge
+        for _, buff in pairs(current_runes) do
+            if(rune_buff_ids:contains(buff:get_buff_id())) then
+                tracked_mobs[player.id]:remove_buff(buff:get_buff_id(), buff:get_spell_id())
             end
         end
     end

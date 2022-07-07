@@ -91,17 +91,31 @@ function TrackedMob:add_bard_buff(new_buff)
     end
 end
 
-function TrackedMob:add_rune_buff(new_buff)
+function TrackedMob:add_rune_buff(player, new_buff)
     local rune_buff_ids = S{523, 524, 525, 526, 527, 528, 529, 530}
     local current_runes = T(self.buffs:filter(function(buff) return rune_buff_ids:contains(buff:get_buff_id()) end))
 
-    if current_runes:length() >= 3 then
-        local first_rune = current_runes:sort(function(buff1, buff2) return buff1:get_remaining_duration_in_seconds() < buff2:get_remaining_duration_in_seconds() end):first()
+    local run_job_level = player.main_job == 'RUN' and player.main_job_level or math.floor(player.main_job_level / 2)
+    local rune_cap = (run_job_level >= 65) and 3 or run_job_level >= 35 and 2 or 1
 
+    if current_runes:length() >= rune_cap then
+        local first_rune = current_runes:sort(function(buff1, buff2) return buff1:get_remaining_duration_in_seconds() < buff2:get_remaining_duration_in_seconds() end):first()
         self:remove_buff(first_rune:get_buff_id(), first_rune:get_spell_id())
     end
 
     self.buffs:append(new_buff)
+end
+
+function TrackedMob:subtract_rune_buff()
+    local rune_buff_ids = S{523, 524, 525, 526, 527, 528, 529, 530}
+    local current_runes = T(self.buffs:filter(function(buff) return rune_buff_ids:contains(buff:get_buff_id()) end))
+
+    if current_runes:length() > 1 then
+        local last_rune = current_runes:sort(function(buff1, buff2) return buff1:get_remaining_duration_in_seconds() > buff2:get_remaining_duration_in_seconds() end):first()
+        self:remove_buff(last_rune:get_buff_id(), last_rune:get_spell_id())
+    else
+        self:remove_buff(current_runes[0].get_buff_id(), current_runes[0].get_spell_id())
+    end
 end
 
 -- function TrackedMob:add_buff(buff)
