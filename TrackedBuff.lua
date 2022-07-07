@@ -205,23 +205,19 @@ function TrackedBuff:calculate_buff_duration()
         local skill = self:get_spell_skill()
         local type = self:get_spell_type()
 
+        local duration = nil
+        local modifiers = nil
+
         if skill then
             if skill == "Enhancing Magic" then
-                local duration, modifiers = calculate_enhancing_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+                duration, modifiers = calculate_enhancing_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
                 if duration then
                     self.calculated_duration = duration
                     self.modifiers = modifiers
                 end
-            
             elseif skill == "Singing" then
-                local duration, modifiers = calculate_song_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
-
-                if duration then
-                    self.calculated_duration = duration
-                    self.modifiers = modifiers
-                end
-
+                duration, modifiers = calculate_song_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
             elseif skill == "Enfeebling Magic" then
                 local duration_map, modifiers = calculate_enfeebling_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
 
@@ -231,37 +227,14 @@ function TrackedBuff:calculate_buff_duration()
                 end
             end
         elseif type == "JobAbility" then
-            local duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
-            -- TODO: Consolidate this into one block after the calculate methods
-            if duration then
-                self.calculated_duration = duration
-                self.modifiers = modifiers
-            end
+            duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         elseif type == "CorsairRoll" then
-            local duration, modifiers = calculate_roll_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
-
-            if duration then
-                self.calculated_duration = duration
-                self.modifiers = modifiers
-            end
+            duration, modifiers = calculate_roll_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         elseif type == 'Jig' or type == 'Samba' or type == 'Step' then
-            local duration, modifiers = calculate_dnc_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
-
-            if duration then
-                self.calculated_duration = duration
-                self.modifiers = modifiers
-            end
+            duration, modifiers = calculate_dnc_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+        elseif type == 'Ward' or type == 'Effusion' then
+            duration, modifiers = calculate_run_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         end
-    end
-end
-
-function TrackedBuff:calculate_step_duration(mob)
-    if self:is_player_caster() then
-        local skill = self:get_spell_skill()
-        local type = self:get_spell_type()
-
-        local duration, modifiers = calculate_dnc_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs(), mob)
-
         if duration then
             self.calculated_duration = duration
             self.modifiers = modifiers
