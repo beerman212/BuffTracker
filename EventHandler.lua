@@ -152,6 +152,28 @@ function action_handler(action)
 
             end
         end
+    -- Pet Actions
+    elseif category == 'mob_tp_finish' and actionpacket:get_id() == player.pet.id then
+        local buff = res.buffs[spell.status]
+        local equipment = windower.ffxi.get_items("equipment")
+        local time_cast = socket.gettime()
+
+        for target in actionpacket:get_targets() do
+            local action = target:get_actions()()
+            local message_id = action:get_message_id()
+
+            if no_effect_message_ids:contains(message_id) then
+                -- Do nothing
+            else
+                local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                if not tracked_mobs[target.id] then
+                    tracked_mobs[target.id] = TrackedMob.new(target)
+                end
+
+                tracked_buff:calculate_buff_duration()
+                tracked_mobs[target.id]:add_buff(tracked_buff)
+            end
+        end
     elseif type == 'JobAbility' or type == 'CorsairRoll'
         or type == 'Jig' or type == 'Samba' or type == 'Step' 
         or category == 'job_ability_run' or type == 'Rune' then

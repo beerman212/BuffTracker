@@ -234,6 +234,8 @@ function TrackedBuff:calculate_buff_duration()
             duration, modifiers = calculate_dnc_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         elseif type == 'Ward' or type == 'Effusion' then
             duration, modifiers = calculate_run_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
+        elseif type:startswith('BloodPact') then
+            duration, modifiers = calculate_bp_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
         end
         if duration then
             self.calculated_duration = duration

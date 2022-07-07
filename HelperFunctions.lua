@@ -277,6 +277,52 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 end
 
+-- Summoner Blood Pacts. This needs to be fired on aftercast of the pact going off!
+function calculate_bp_duration(player, pact, target, equipment, buffs)
+    if not (player or spell or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+
+    local duration_bonus = 0
+    local duration_modifier = 1
+    local base_duration = (spell.duration or 0)
+
+    -- We don't actually care about equipment for this one since skill is pulled directly from memory
+
+    --[[ For most abilities the duration is given by:
+        base_duration + skill_over_300/100
+        Known exceptions: 15 minutes: Aerial Armor, Earthen Ward,
+        Perfect Defense, Reraise II, whatever Atomos does ]]
+    -- TODO: Perfect Defense does not have a default duration in res/job_abilities.lua
+    if (player.skills['???'] >= 300) and (pact.duration >= 60) and (pact.duration <= 180) then
+        duration_bonus = duration_bonus + math.floor((player.skills['???'] - 300))
+    end
+
+    -- Astral Conduit Job Points
+    if player.main_job == "SMN" then
+        duration_bonus = duration_bonus + ((player.job_points.smn['Astral Conduit'] * 0.01) or 0)
+    end
+
+    duration = (base_duration + duration_bonus) * duration_bonus
+
+    local duration_map = table.map(resist_state_modifiers,
+        function(resist_multiplier)
+            return math.floor(duration * resist_multiplier)
+        end)
+
+    local modifiers = {
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier,
+    }
+
+    if spell.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if spell.targets == 1 then
+        return duration, modifiers
+    end
+end
+
 -- Job Ability Calculations
 function calculate_ja_duration(player, ability, target, equipment, buffs)
     if not (player or ability or target or equipment or buffs) then return end
