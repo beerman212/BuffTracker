@@ -8,6 +8,13 @@ function action_handler(action)
 
     if not spell then return end
 
+    local debug = false
+    if debug then
+        log(category)
+        log('Actor ID: ' .. actionpacket:get_id())
+        log('Spell ID: ' .. spell.id .. ' Spell name: ' .. spell.english .. ' Spell type: ' .. (spell.type or 'no type'))
+    end
+
     -- Rune Fencer's Swipe and Lunge abilities do not have duration but can consume runes. Other similar
     -- abilities should go above the duration check as well
     if spell.english == 'Lunge' or spell.english == 'Swipe' then
@@ -153,7 +160,7 @@ function action_handler(action)
             end
         end
     -- Pet Actions
-    elseif category == 'mob_tp_finish' and actionpacket:get_id() == player.pet.id then
+    elseif category == 'avatar_tp_finish' and actionpacket:get_id() == windower.ffxi.get_mob_by_target('pet')['id'] then
         local buff = res.buffs[spell.status]
         local equipment = windower.ffxi.get_items("equipment")
         local time_cast = socket.gettime()
