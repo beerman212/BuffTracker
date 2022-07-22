@@ -277,6 +277,50 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
     end
 end
 
+-- Summoner Blood Pacts. This needs to be fired on aftercast of the pact going off!
+function calculate_bp_duration(player, pact, target, equipment, buffs)
+    if not (player or spell or target or equipment or buffs) then return end
+    local current_time = socket.gettime()
+
+    local duration_bonus = 0
+    local duration_modifier = 1
+    local base_duration = (pact.duration or 0)
+
+    -- Perfect Defense is the only Rage pact with variable duration
+    if pact.type == 'BloodPactRage' and pact.english ~= 'Perfect Defense' then return base_duration end
+
+    -- We don't actually care about equipment for this one since skill is pulled directly from memory
+
+    --[[ For most abilities the duration is given by:
+        base_duration + skill_over_300/100
+        Known exceptions: 15 minutes: Aerial Armor, Earthen Ward,
+        Perfect Defense, Reraise II, whatever Atomos does
+        Filter on targets == 32 for enfeebling pacts ]]
+    -- TODO: Perfect Defense does not have a default duration in res/job_abilities.lua
+    if (player.skills['summoning_magic'] >= 300) and (pact.duration >= 60) and (pact.duration <= 180) 
+        and not pact.targets.Enemy then
+        duration_bonus = duration_bonus + player.skills['summoning_magic'] - 300
+    elseif pact.english == 'Perfect Defense' then
+        duration_bonus = player.skills['summoning_magic'] / 20
+        if duration_bonus > 30 then duration_bonus = 30 end
+    end
+
+    -- Astral Conduit Job Points
+    if player.main_job == "SMN" and buffs['Astral Conduit'] then
+        duration_modifier = duration_modifier + ((player.job_points.smn['Astral Conduit'] or 0) * 0.01)
+    end
+
+    duration = (base_duration + duration_bonus) * duration_modifier
+
+    local modifiers = {
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier
+    }
+
+    return duration, modifiers
+end
+
 -- Job Ability Calculations
 function calculate_ja_duration(player, ability, target, equipment, buffs)
     if not (player or ability or target or equipment or buffs) then return end
@@ -848,4 +892,56 @@ function unpack_equipment_inf0(equipment)
     equipment.unpacked = equip_info
 
     return equipment
+end
+
+-- This table will calculate at the time it is called, for the keys it is called
+conditions = {
+    ['In Dynamis:'] = function(info, buffs)
+        local dynamis_zones = S{39,40,41,42,134,135,185,186,187,188,294,295,296,297}
+        local ffxi_info = windower.ffxi.get_info()
+        return dynamis_zones:contains(ffxi_info.zone)
+    end,
+    ['Assault:'] = function(info, buffs)
+        local assault_zones = S{69,66,63,56,55,77}
+        local ffxi_info = windower.ffxi.get_info()
+        return assault_zones:contains(ffxi_info.zone)
+    end,
+    -- Conditions which expect an argument will need to be handled separately
+    ['Reives:'] = function(info, buffs) 
+        return buffs['Reive Mark']
+    end,
+    ['Nighttime:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] < 360) or (ffxi_info['time'] >= 1080)
+    end,
+    ['Dusk to Dawn:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] < 420) or (ffxi_info['time'] >= 1020)
+    end,
+    ['Daytime:'] = function(info, buffs)
+        local ffxi_info = windower.ffxi.get_info()
+        return (ffxi_info['time'] >= 360) and (ffxi_info['time'] < 1080)
+    end
+    -- To be implemented
+    -- Set:
+    -- Days of the week; firesday = 0
+    -- Weather:
+    -- Moon phase
+    -- vs enemy types
+    -- Citizenship
+    -- Nation control
+    -- Latent Effect:
+    -- Poison:
+    -- Paralysis:
+    -- Besieged:
+    -- Salvage:
+    -- Unity Ranking:
+}
+
+function get_world_info()
+    local info = cache.get_info
+    if not info then
+        info = windower.ffxi.get_info()
+        cache.get_info = info       
+    end
 end
