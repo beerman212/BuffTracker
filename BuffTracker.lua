@@ -9,9 +9,10 @@ require('functions')
 require('actions')
 require('packets')
 local texts = require('texts')
+
 local resource_modifications = require('static/resource_modifications')
 res = require('resources')
-res:amend(resource_modifications, true)
+table.amend(res, resource_modifications, true)
 
 require('tables')
 require('sets')
