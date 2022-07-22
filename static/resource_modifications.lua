@@ -1,5 +1,5 @@
 return {
-    jobabilities = {
+    job_abilities = {
         [513] = {id=513,en="Poison Nails",ja="ポイズンネイル",duration=90,element=6,icon_id=340,mp_cost=11,prefix="/pet",range=2,recast_id=173,status=3,skillchain_a="Transfixion",skillchain_b="",skillchain_c="",targets=32,tp_cost=0,type="BloodPactRage"},
         [522] = {id=522,en="Mewing Lullaby",ja="ミュインララバイ",duration=35,element=6,icon_id=351,mp_cost=61,prefix="/pet",range=4,recast_id=174,status=2,targets=32,tp_cost=0,type="BloodPactWard"},
         [523] = {id=523,en="Eerie Eye",ja="イアリーアイ",duration=15,element=6,icon_id=351,mp_cost=134,prefix="/pet",range=2,recast_id=174,status=16,targets=32,tp_cost=0,type="BloodPactWard"}, -- Amnesia=16 [set]; Silence.duration=20,Silence.status=6
