@@ -29,5 +29,58 @@ return {
         [960] = {id=960,en="Clarsach Call",ja="クラーサクコール",duration=180,element=2,icon_id=18,mp_cost=0,prefix="/pet",range=4,recast_id=173,skillchain_a="",skillchain_b="",skillchain_c="",targets=32,tp_cost=0,type="BloodPactRage"}, -- ATK/DEF/MAB/MDB/EVA/MEVA+, targets self however.
         [963] = {id=963,en="Lunatic Voice",ja="ルナティックボイス",duration=90,element=2,icon_id=18,mp_cost=37,prefix="/pet",range=4,recast_id=174,status=6,targets=32,tp_cost=0,type="BloodPactWard"},
         [966] = {id=966,en="Bitter Elegy",ja="修羅のエレジー",duration=180,element=2,icon_id=18,mp_cost=96,prefix="/pet",range=9,recast_id=174,status=194,targets=32,tp_cost=0,type="BloodPactWard"}
-    }
+    },
+
+    spells = {
+        [547] = {duration=90,status=93,blu_points=1}, -- Cocoon
+        [548] = {duration=90,status=565,blu_points=3}, -- Filamented Hold  
+        [582] = {duration=120,status=6,blu_points=2}, -- Chaotic Eye
+        [584] = {duration=60,status=2,blu_points=2}, -- Sheep Song
+        [644] = {duration=90,status=4,overwrites={644},blu_points=4}, -- Mind Blast
+        [647] = {duration=900,status=36,blu_points=2}, -- Zephyr Mantle
+        [648] = {duration=30,status=7,overwrites={258,648},blu_points=1}, -- Regurgitation  
+        [660] = {duration=90,status=565,overwrites={548},blu_points=3}, -- Cimicine Discharge  
+        [661] = {duration=300,status=33,blu_points=5}, -- Animating Wail
+        [662] = {duration=300,status=43,blu_points=3}, -- Battery Charge
+        [668] = {duration=900,status=152,blu_points=3}, -- Magic Barrier
+        [671] = {duration=60,status=5,blu_points=4}, -- Auroral Drape; also status 6
+        [674] = {duration=180,status=45,blu_points=1}, -- Fantod
+        [679] = {duration=300,status=36,blu_points=3}, -- Occultation
+        [682] = {duration=60,status=31,overwrites={682},blu_points=2}, -- Delta Thrust
+        [685] = {duration=180,status=116,blu_points=3}, -- Barrier Tusk
+        [692] = {duration=8,status=10,blu_points=4}, -- Sudden Lunge
+        [696] = {duration=180,status=61,blu_points=5}, -- O. Counterstance
+        [699] = {duration=120,status=146,overwrites={699,742},blu_points=2}, -- Barbed Crescent
+        [700] = {duration=90,status=91,blu_points=6}, -- Nat. Meditation
+        [703] = {duration=180,status=565,overwrites={548,660,703},blu_points=6}, -- Embalming Earth
+        [704] = {duration=60,status=4,overwrites={644,704},blu_points=6}, -- Paralyzing Triad
+        [705] = {duration=180,status=133,overwrites={705},blu_points=3}, -- Foul Waters  
+        [708] = {duration=90,status=12,overwrites={708},blu_points=6}, -- Subduction
+        [710] = {duration=300,status=33,blu_points=6}, -- Erratic Flutter
+        [717] = {duration=120,status=149,blu_points=6}, -- Sweeping Gouge
+        [716] = {duration=30,status=540,overwrites={716},blu_points=6}, -- Nectarous Deluge
+        [717] = {duration=120,status=149,overwrites={717},blu_points=6}, -- Sweeping Gouge
+        [719] = {duration=180,status=128,overwrites={739,719},blu_points=8}, -- Searing Tempest
+        [720] = {duration=3,status=28,blu_points=8}, -- Spectral Floe  
+        [722] = {duration=60,status=7,overwrites={255,365,722},blu_points=8}, -- Entomb  
+        [723] = {duration=60,status=147,overwrites={726,723,742},blu_points=7}, -- Saurian Slide  
+        [724] = {duration=60,status=135,overwrites={724},blu_points=7}, -- Palling Salvo    
+        [726] = {duration=180,status=147,overwrites={726},blu_points=8}, -- Scouring Spate
+        [727] = {duration=300,status=6,blu_points=8}, -- Silent Storm
+        [728] = {duration=90,status=149,overwrites={717},blu_points=8}, -- Tenebral Crush
+        [728] = {duration=180,status=149,overwrites={170,717,728,742},blu_points=8}, -- Tenebral Crush  
+        [736] = {duration=8,status=10}, -- Thunderbolt
+        [737] = {duration=90,status=93}, -- Harden Shell
+        [740] = {duration=60,status=149,overwrites={717,728}}, -- Tourbillion
+        [738] = {duration=30,status=28}, -- Absolute Terror
+        [739] = {duration=90,status=128,overwrites={739}}, -- Gates of Hades
+        [740] = {duration=60,status=149,overwrites={170,717,728,742}}, -- Tourbillion
+        [741] = {duration=300,status=150}, -- Pyric Bulwark
+        [742] = {duration=60,status=146,overwrites={170,717,726,728,742}}, -- Bilgestorm; also statuses 147,149
+        [745] = {duration=60,status=91}, -- Carcharian Verve
+        [746] = {duration=12,status=28}, -- Blistering Roar
+        [750] = {duration=180,status=604}, -- Mighty Guard
+        [751] = {duration=60,status=15}, -- Cruel Joke
+        [752] = {duration=60,status=31,overwrites={682,752}} -- Cesspool
+  }
 }
