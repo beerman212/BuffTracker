@@ -12,7 +12,7 @@ local texts = require('texts')
 
 local resource_modifications = require('static/resource_modifications')
 res = require('resources')
-table.amend(res, resource_modifications, true)
+table.update(res, resource_modifications, true)
 
 require('tables')
 require('sets')
