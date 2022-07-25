@@ -779,6 +779,194 @@ run_modifiers = {
 	    value=10}}
 }
 
+-- Summoner; not needed due to how summoning skill is retrieved, but leaving in for now
+smn_modifiers = {
+    [10368] = { ['Summoning magic skill']={  -- adhara crackows
+        value=8}},
+    [10602] = { ['Summoning magic skill']={  -- rubeus boots
+        value=10}},
+    [10704] = { ['Summoning magic skill']={  -- summoner's bracers +2
+        value=15}},
+    [10823] = { ['Summoning magic skill']={  -- cimmerian sash
+        value=5}},
+    [11078] = { ['Summoning magic skill']={  -- caller's horn +2
+        value=9}},
+    [11098] = { ['Summoning magic skill']={  -- caller's doublet +2
+        value=10}},
+    [11138] = { ['Summoning magic skill']={  -- caller's spats +2
+        value=6}},
+    [11178] = { ['Summoning magic skill']={  -- caller's horn +1
+        value=6}},
+    [11198] = { ['Summoning magic skill']={  -- caller's doublet +1
+        value=7}},
+    [11619] = { ['Summoning magic skill']={  -- caller's pendant
+        value=9}},
+    [11675] = { ['Summoning magic skill']={  -- fervor ring
+        value=4}},
+    [11852] = { ['Summoning magic skill']={  -- hyksos robe
+        value=10}},
+    [11856] = { ['Summoning magic skill']={  -- anhur robe
+        value=12}},
+    [11860] = { ['Summoning magic skill']={  -- hyksos robe +1
+        value=11}},
+    [11982] = { ['Summoning magic skill']={  -- magavan slops
+        value=6}},
+    [11986] = { ['Summoning magic skill']={  -- mystagog slacks
+        value=8}},
+    [11987] = { ['Summoning magic skill']={  -- ngen seraweels
+        value=10}},
+    [12022] = { ['Summoning magic skill']={  -- caller's horn
+        value=3}},
+    [12042] = { ['Summoning magic skill']={  -- caller's doublet
+        value=3}},
+    [12520] = { ['Summoning magic skill']={  -- evoker's horn
+        value=5}},
+    [13158] = { ['Summoning magic skill']={  -- summoning torque
+        value=7}},
+    [13673] = { ['Summoning magic skill']={  -- magician's mantle
+        value=5,
+        condition='Subjob=SMN'}},
+    [13939] = { ['Summoning magic skill']={  -- austere hat
+        value=2}},
+    [13940] = { ['Summoning magic skill']={  -- penance hat
+        value=3}},
+    [13950] = { ['Summoning magic skill']={  -- elite beret
+        value=4}},
+    [13951] = { ['Summoning magic skill']={  -- elite beret +1
+        value=5}},
+    [14189] = { ['Summoning magic skill']={  -- austere sabots
+        value=3}},
+    [14190] = { ['Summoning magic skill']={  -- penance sabots
+        value=4}},
+    [14310] = { ['Summoning magic skill']={  -- austere slops
+        value=3}},
+    [14311] = { ['Summoning magic skill']={  -- penance slops
+        value=4}},
+    [14365] = { ['Summoning magic skill']={  -- augur's jaseran
+        value=10}},
+    [14625] = { ['Summoning magic skill']={  -- evoker's ring
+        value=10}},
+    [14777] = { ['Summoning magic skill']={  -- summoning earring
+        value=3}},
+    [14826] = { ['Summoning magic skill']={  -- austere cuffs
+        value=2}},
+    [14827] = { ['Summoning magic skill']={  -- penance cuffs
+        value=3}},
+    [14923] = { ['Summoning magic skill']={  -- summoner's bracers +1
+        value=12}},
+    [15054] = { ['Summoning magic skill']={  -- beacon cuffs
+        value=5}},
+    [15116] = { ['Summoning magic skill']={  -- summoner's bracers
+        value=10}},
+    [15239] = { ['Summoning magic skill']={  -- evoker's horn +1
+        value=5}},
+    [15473] = { ['Summoning magic skill']={  -- astute cape
+        value=5}},
+    [15536] = { ['Summoning magic skill']={  -- rho necklace
+        value=3,
+        condition='Salvage:'}},
+    [15637] = { ['Summoning magic skill']={  -- Marduk's shalwar
+        value=5}},
+    [15662] = { ['Summoning magic skill']={  -- nashira crackows
+        value=5}},
+    [15723] = { ['Summoning magic skill']={  -- Marduk's crackows
+        value=5}},
+    [15942] = { ['Summoning magic skill']={  -- summoning belt
+        value=2}},
+    [16096] = { ['Summoning magic skill']={  -- Marduk's tiara
+        value=7}},
+    [16342] = { ['Summoning magic skill']={  -- oracle's braconi
+        value=5}},
+    [17105] = { ['Summoning magic skill']={  -- soulscourge
+        value=7}},
+    [17598] = { ['Summoning magic skill']={  -- Bahamut's staff
+        value=5}},
+    [19058] = { ['Summoning magic skill']={  -- vox grip
+        value=3}},
+    [21120] = { ['Summoning magic skill']={  -- patriarch cane
+        value=5}},
+    [21145] = { ['Summoning magic skill']={  -- exemplar
+        value=15}},
+    [21178] = { ['Summoning magic skill']={  -- Tumafyrig
+        value=7}},
+    [23054] = { ['Summoning magic skill']={  -- convoker's horn +2
+        value=17}},
+    [23211] = { ['Summoning magic skill']={  -- glyphic bracers +2
+        value=21}},
+    [23389] = { ['Summoning magic skill']={  -- convoker's horn +3
+        value=19}},
+    [23546] = { ['Summoning magic skill']={  -- glyphic bracers +3
+        value=23}},
+    [25565] = { ['Summoning magic skill']={  -- Baayami hat
+        value=26}},
+    [25566] = { ['Summoning magic skill']={  -- Baayami hat +1
+        value=31}},
+    [25905] = { ['Summoning magic skill']={  -- Baayami slops
+        value=30}},
+    [25906] = { ['Summoning magic skill']={  -- Baayami slops +1
+        value=35}},
+    [25972] = { ['Summoning magic skill']={  -- Baayami sabots
+        value=24}},
+    [25973] = { ['Summoning magic skill']={  -- Baayami sabots +1
+        value=29}},
+    [25992] = { ['Summoning magic skill']={  -- Baayami cuffs
+        value=28}},
+    [25993] = { ['Summoning magic skill']={  -- Baayami cuffs +1
+        value=33}},
+    [26012] = { ['Summoning magic skill']={  -- melic torque
+        value=10}},
+    [26087] = { ['Summoning magic skill']={  -- Cath Palug earring
+        value=5}},
+    [26099] = { ['Summoning magic skill']={  -- Lodurr earring
+        value=10}},
+    [26320] = { ['Summoning magic skill']={  -- kobo obi
+        value=8}},
+    [26541] = { ['Summoning magic skill']={  -- Baayami robe
+        value=32}},
+    [26542] = { ['Summoning magic skill']={  -- Baayami robe +1
+        value=37}},
+    [26768] = { ['Summoning magic skill']={  -- beckoner's horn
+        value=11}},
+    [26769] = { ['Summoning magic skill']={  -- beckoner's horn +1
+        value=13}},
+    [26796] = { ['Summoning magic skill']={  -- psycloth tiara
+        value=15}},
+    [26926] = { ['Summoning magic skill']={  -- beckoner's doublet
+        value=12}},
+    [26927] = { ['Summoning magic skill']={  -- beckoner's doublet +1
+        value=14}},
+    [27004] = { ['Summoning magic skill']={  -- glyphic bracers
+        value=17}},
+    [27005] = { ['Summoning magic skill']={  -- glyphic bracers +1
+        value=19}},
+    [27108] = { ['Summoning magic skill']={  -- lamassu mitts
+        value=21}},
+    [27109] = { ['Summoning magic skill']={  -- lamassu mitts +1
+        value=22}},
+    [27265] = { ['Summoning magic skill']={  -- beckoner's spats
+        value=15}},
+    [27266] = { ['Summoning magic skill']={  -- beckoner's spats +1
+        value=20}},
+    [27651] = { ['Summoning magic skill']={  -- Marduk's tiara +1
+        value=12}},
+    [27677] = { ['Summoning magic skill']={  -- convoker's horn
+        value=15}},
+    [28074] = { ['Summoning magic skill']={  -- Marduk's shalwar +1
+        value=11}},
+    [28144] = { ['Summoning magic skill']={  -- Adapa's slacks +1
+        value=14}},
+    [28211] = { ['Summoning magic skill']={  -- Marduk's crackows +1
+        value=11}},
+    [28416] = { ['Summoning magic skill']={  -- lucidity sash
+        value=7}},
+    [28506] = { ['Summoning magic skill']={  -- andoaa earring
+        value=5}},
+    [28539] = { ['Summoning magic skill']={  -- globidonta ring
+        value=5}},
+    [28631] = { ['Summoning magic skill']={  -- conveyance cape
+        value=8}}
+}
+
 composure_gear = S{
     11068, -- estoqueur's chappel +2
     11088, -- estoqueur's sayon +2

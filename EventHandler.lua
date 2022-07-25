@@ -8,6 +8,13 @@ function action_handler(action)
 
     if not spell then return end
 
+    local debug = false
+    if debug then
+        log(category)
+        log('Actor ID: ' .. actionpacket:get_id())
+        log('Spell ID: ' .. spell.id .. ' Spell name: ' .. spell.english .. ' Spell type: ' .. (spell.type or 'no type'))
+    end
+
     -- Rune Fencer's Swipe and Lunge abilities do not have duration but can consume runes. Other similar
     -- abilities should go above the duration check as well
     if spell.english == 'Lunge' or spell.english == 'Swipe' then
@@ -150,6 +157,28 @@ function action_handler(action)
                 end
             else
 
+            end
+        end
+    -- Pet Actions
+    elseif category == 'avatar_tp_finish' and actionpacket:get_id() == windower.ffxi.get_mob_by_target('pet')['id'] then
+        local buff = res.buffs[spell.status]
+        local equipment = windower.ffxi.get_items("equipment")
+        local time_cast = socket.gettime()
+
+        for target in actionpacket:get_targets() do
+            local action = target:get_actions()()
+            local message_id = action:get_message_id()
+
+            if no_effect_message_ids:contains(message_id) then
+                -- Do nothing
+            else
+                local tracked_buff = TrackedBuff.new(buff, spell, player, target, equipment, time_cast)
+                if not tracked_mobs[target.id] then
+                    tracked_mobs[target.id] = TrackedMob.new(target)
+                end
+
+                tracked_buff:calculate_buff_duration()
+                tracked_mobs[target.id]:add_buff(tracked_buff)
             end
         end
     elseif type == 'JobAbility' or type == 'CorsairRoll'
