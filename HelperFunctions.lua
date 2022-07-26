@@ -285,15 +285,21 @@ function calculate_blue_magic_duration(player, spell, target, equipment, buffs)
     local duration_bonus = 0
 
     -- Unbridled Learning Effect II (JP, Carcharian Verve is unique here)
-    if not spell.english:contains('Carcharian Verve') then
+    if not spell.english == 'Carcharian Verve' then
         duration_modifier = duration_modifier + (player.job_points.blu['Unbridled Learning Effect II '] or 0) * 0.01
     end
 
     -- Diffusion merits, 20 for raw (5 for each past the first) and mirage+ charuqs [aug] 5/merit
-    duration_modifier = (1 + (player.merits['Diffusion'] - 1) * 0.05) or 1
-    duration_modifier = duration_modifier + 
-        ((player.merits['Diffusion'] - 1) or 0) * 
-        search_augments(equipped_items, 'Enhances "Diffusion" effect'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.05
+    if player.merits['Diffusion'] then
+        duration_modifier = 1 + (player.merits['Diffusion'] - 1) * 0.05
+        duration_modifier = duration_modifier + 
+            ((player.merits['Diffusion'] - 1)) * 
+            search_augments(equipped_items, 'Enhances "Diffusion" effect'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.05
+    end
+
+    local duration = (base_duration * duration_modifier + duration_bonus)
+
+    duration = math.floor(duration)
 
     local modifiers = {
         ["Flat Bonus"] = duration_bonus,
