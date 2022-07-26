@@ -36,7 +36,7 @@ return {
         [548] = {duration=90,status=565,blu_points=3}, -- Filamented Hold  
         [582] = {duration=120,status=6,blu_points=2}, -- Chaotic Eye
         [584] = {duration=60,status=2,blu_points=2}, -- Sheep Song
-        [603] = {duration=90,status=138,blu_points=3}, -- Wild Oats
+        [603] = {duration=90,status=138,blu_points=3, unconfirmed=true}, -- Wild Oats
         [644] = {duration=90,status=4,overwrites={644},blu_points=4, unconfirmed=true}, -- Mind Blast
         [647] = {duration=900,status=36,blu_points=2}, -- Zephyr Mantle
         [648] = {duration=30,status=7,overwrites={258,648},blu_points=1, unconfirmed=true}, -- Regurgitation  

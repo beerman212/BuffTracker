@@ -95,6 +95,10 @@ function TrackedBuff:get_target_name()
     return self.target.name
 end
 
+function TrackedBuff:get_unconfirmed()
+    return self.spell.unconfirmed or false
+end
+
 function TrackedBuff:get_current_duration_in_seconds()
     local current_time = socket.gettime()
 
