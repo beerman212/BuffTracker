@@ -56,7 +56,7 @@ function action_handler(action)
             else
 
             end
-        elseif skill_name == "Singing" then
+        elseif skill_name == "Singing" or skill_name == "Blue Magic" then -- Both are handled exactly the same
                 if actor_id == player.id then
                     local equipment = windower.ffxi.get_items('equipment')
     

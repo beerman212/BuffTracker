@@ -266,7 +266,39 @@ function calculate_song_duration(player, spell, target, equipment, buffs)
         ["Soul Voice"] = soul_voice_modifier,
         ["Flat Bonus"] = duration_bonus,
         ["Duration"] = duration_modifier,
-        ["Augment"] = augment_duration_modifier,
+        ["Augment"] = augment_duration_modifier
+    }
+
+    if spell.targets == 32 then
+        return duration_map, modifiers
+    else
+        -- if spell.targets == 1 then
+        return duration, modifiers
+    end
+end
+
+function calculate_blue_magic_duration(player, spell, target, equipment, buffs)
+    local equipped_items = fetch_equipped_items(equipment)
+
+    local base_duration = spell.duration or 0
+    local duration_modifier = 1
+    local duration_bonus = 0
+
+    -- Unbridled Learning Effect II (JP, Carcharian Verve is unique here)
+    if not spell.english:contains('Carcharian Verve') then
+        duration_modifier = duration_modifier + (player.job_points.blu['Unbridled Learning Effect II '] or 0) * 0.01
+    end
+
+    -- Diffusion merits, 20 for raw (5 for each past the first) and mirage+ charuqs [aug] 5/merit
+    duration_modifier = (1 + (player.merits['Diffusion'] - 1) * 0.05) or 1
+    duration_modifier = duration_modifier + 
+        ((player.merits['Diffusion'] - 1) or 0) * 
+        search_augments(equipped_items, 'Enhances "Diffusion" effect'):reduce(function(total, aug) return total + ((not aug.sign or aug.sign=='+') and aug.value or (aug.value * -1)) end, 0) * 0.05
+
+    local modifiers = {
+        ["Flat Bonus"] = duration_bonus,
+        ["Duration"] = duration_modifier,
+        ["Augment"] = augment_duration_modifier
     }
 
     if spell.targets == 32 then
@@ -296,7 +328,7 @@ function calculate_bp_duration(player, pact, target, equipment, buffs)
         Known exceptions: 15 minutes: Aerial Armor, Earthen Ward,
         Perfect Defense, Reraise II, whatever Atomos does
         Filter on targets == 32 for enfeebling pacts ]]
-    -- TODO: Perfect Defense does not have a default duration in res/job_abilities.lua
+    -- TODO: Account for Atomos buff stealing
     if (player.skills['summoning_magic'] >= 300) and (pact.duration >= 60) and (pact.duration <= 180) 
         and not pact.targets.Enemy then
         duration_bonus = duration_bonus + player.skills['summoning_magic'] - 300
