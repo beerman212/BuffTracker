@@ -56,7 +56,7 @@ function action_handler(action)
             else
 
             end
-        elseif skill_name == "Singing" then
+        elseif skill_name == "Singing" or skill_name == "Blue Magic" then -- Both are handled exactly the same
                 if actor_id == player.id then
                     local equipment = windower.ffxi.get_items('equipment')
     
@@ -287,6 +287,9 @@ windower.register_event('prerender', function(id)
             if mob:has_buffs() then
                 for _, buff in pairs(mob.buffs) do
                     display_info = display_info .. ("\n%-12s : %10s"):format(buff:get_spell_name(), buff:get_remaining_duration_as_timer())
+                    if buff:get_unconfirmed() then
+                        display_info = display_info .. ' (U)'
+                    end
                 end
             end
         end
