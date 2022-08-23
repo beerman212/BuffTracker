@@ -95,6 +95,10 @@ function TrackedBuff:get_target_name()
     return self.target.name
 end
 
+function TrackedBuff:get_unconfirmed()
+    return self.spell.unconfirmed or false
+end
+
 function TrackedBuff:get_current_duration_in_seconds()
     local current_time = socket.gettime()
 
@@ -225,6 +229,8 @@ function TrackedBuff:calculate_buff_duration()
                     self.calculated_duration = duration_map
                     self.modifiers = modifiers
                 end
+            elseif skill == "Blue Magic" then
+                duration, modifiers = calculate_blue_magic_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
             end
         elseif type == "JobAbility" then
             duration, modifiers = calculate_ja_duration(self.caster, self.spell, self.target, self.equipment, self:get_caster_buffs())
